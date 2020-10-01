@@ -1,29 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <parent>
-        <groupId>net.fhirbox.pegacorn</groupId>
-        <artifactId>the-pegacorn-project</artifactId>
+        <groupId>net.fhirfactory.pegacorn</groupId>
+        <artifactId>pegacorn</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pegacorn</relativePath>
     </parent>
-    
+
     <artifactId>pegacorn-ladon</artifactId>
     <packaging>pom</packaging>
-    
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    
+
     <modules>
+	<module>../pegacorn-ladon-model</module>
+        <module>../pegacorn-ladon-processingplant</module>
         <module>../pegacorn-ladon-edge</module>
         <module>../pegacorn-ladon-twin</module>
         <module>../pegacorn-ladon-dtcache</module>
+		<!--        <module>../pegacorn-ladon-mdr</module> -->
+        <module>../pegacorn-ladon-subsystem</module>
     </modules>
-    
+
     <name>Pegacorn :: Ladon</name>
     <description>The Digital-Twin and Master Data Management Framework</description>
-   
-        
+
+
 </project>
