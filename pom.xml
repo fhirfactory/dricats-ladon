@@ -18,12 +18,12 @@
     </properties>
 
     <modules>
-	<module>../pegacorn-ladon-model</module>
+		<module>../pegacorn-ladon-model</module>
         <module>../pegacorn-ladon-processingplant</module>
         <module>../pegacorn-ladon-edge</module>
         <!--module>../pegacorn-ladon-twin</module-->
         <module>../pegacorn-ladon-dtcache</module>
-		<!--        <module>../pegacorn-ladon-mdr</module> -->
+		<module>../pegacorn-ladon-mdr/pegacorn-ladon-mdr</module>
         <module>../pegacorn-ladon-subsystem</module>
     </modules>
 
