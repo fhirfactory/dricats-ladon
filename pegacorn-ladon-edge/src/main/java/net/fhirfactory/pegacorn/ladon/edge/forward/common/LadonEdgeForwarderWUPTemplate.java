@@ -57,17 +57,12 @@ public abstract class LadonEdgeForwarderWUPTemplate extends EdgeEgressMessagingG
         NodeElement targetNode;
         switch(targetSubsystem.getResilienceMode()){
             case RESILIENCE_MODE_MULTISITE:
-            case RESILIENCE_MODE_KUBERNETES_MULTISITE:
-            case RESILIENCE_MODE_CLUSTERED:
-            case RESILIENCE_MODE_KUBERNETES_CLUSTERED:
-            case RESILIENCE_MODE_KUBERNETES_STANDALONE:{
-                getLogger().trace(".deriveTargetEndpointDetails(): Running in Multisite, Clustered or Kubernetes mode");
+            case RESILIENCE_MODE_CLUSTERED:{
                 targetNode = getTopologyServer().getNode(specifyTargetService(), NodeElementTypeEnum.SERVICE, specifyTargetSubsystemVersion());
                 break;
             }
             case RESILIENCE_MODE_STANDALONE:
             default:{
-                getLogger().trace(".deriveTargetEndpointDetails(): Running in Standalone mode");
                 targetNode = getTopologyServer().getNode(specifyTargetProcessingPlant(), NodeElementTypeEnum.PROCESSING_PLANT, specifyTargetSubsystemVersion());
             }
         }

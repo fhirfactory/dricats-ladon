@@ -16,7 +16,7 @@ public abstract class LadonEdgeIPCReceiverWUPTemplate extends EdgeIngresMessagin
 
     private String sourceSystem;
 
-    private String getWUPContinuityRoute() {
+    protected String getWUPContinuityRoute() {
         return ("seda:" + this.getNameSet().getRouteCoreWUP() + ".InnerWUP.Continuity");
     }
 

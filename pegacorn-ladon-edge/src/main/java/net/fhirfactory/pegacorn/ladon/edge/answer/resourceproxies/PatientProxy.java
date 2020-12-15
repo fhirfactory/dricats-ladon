@@ -23,12 +23,16 @@ package net.fhirfactory.pegacorn.ladon.edge.answer.resourceproxies;
 
 import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.bundle.BundleContentHelper;
+import net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.identifier.SearchSupportHelper;
 import net.fhirfactory.pegacorn.datasets.fhir.r4.operationaloutcome.OperationOutcomeGenerator;
 import net.fhirfactory.pegacorn.ladon.edge.answer.resourceproxies.common.LadonEdgeSynchronousCRUDResourceBase;
+import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
+import net.fhirfactory.pegacorn.ladon.model.virtualdb.searches.SearchNameEnum;
 import net.fhirfactory.pegacorn.ladon.virtualdb.accessors.PatientAccessor;
 import net.fhirfactory.pegacorn.ladon.virtualdb.accessors.common.AccessorBase;
 import org.hl7.fhir.r4.model.*;
@@ -37,6 +41,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 @ApplicationScoped
 public class PatientProxy extends LadonEdgeSynchronousCRUDResourceBase implements IResourceProvider {
@@ -52,6 +61,12 @@ public class PatientProxy extends LadonEdgeSynchronousCRUDResourceBase implement
 
     @Inject
     private OperationOutcomeGenerator outcomeGenerator;
+
+    @Inject
+    private BundleContentHelper bundleContentHelper;
+
+    @Inject
+    private SearchSupportHelper searchSupportHelper;
 
     @Override
     public Class<Patient> getResourceType() {
@@ -136,6 +151,46 @@ public class PatientProxy extends LadonEdgeSynchronousCRUDResourceBase implement
         } else {
             Bundle outcomeBundle = getBundleContentHelper().buildSearchResponseBundle(outcome);
             return(outcomeBundle);
+        }
+    }
+
+    //
+    @Search(queryName = "patientQRYA19")
+    public Bundle getPatientQueryResponse(@RequiredParam(name = Patient.SP_IDENTIFIER) TokenParam identifierParam, @RequiredParam(name = "qrya19") StringParam queryString){
+        LOG.debug(".getPatientQueryResponse(): Entry, identifierParam --> {}, qrya19 --> {}", identifierParam, queryString);
+
+        HashMap<Property, Serializable> argumentList = new HashMap<>(); // TODO Need to replace "Serializable" with something more meaningful and appropriate
+
+        // First Parameter, the DocumentReference.type
+        Property subjectProperty = new Property(
+                "subject",
+                "Reference",
+                "The person, animal or group on which the procedure was performed.",
+                0,
+                1,
+                (List<? extends Base>) null);
+        argumentList.put(subjectProperty, identifierParam);
+        // Second Parameter, the DocumentReference.date (expressed as a Period, where the date is to be in-between)
+        Property extensionProperty = new Property(
+                "extension",
+                "String",
+                "Query String for a QRY_A19 Action",
+                0,
+                1,
+                (List<? extends Base>) null);
+        argumentList.put(extensionProperty, queryString);
+
+        VirtualDBMethodOutcome outcome = getVirtualDBAccessor().searchUsingCriteria(ResourceType.Patient, SearchNameEnum.PATIENT_QRY_A19, argumentList);
+
+        if (outcome.getStatusEnum() == VirtualDBActionStatusEnum.SEARCH_FINISHED) {
+            Bundle searchOutcome = (Bundle) outcome.getResource();
+            return (searchOutcome);
+        } else {
+            Bundle outputBundle = new Bundle();
+            outputBundle.setType(Bundle.BundleType.SEARCHSET);
+            outputBundle.setTimestamp(Date.from(Instant.now()));
+            outputBundle.setTotal(0);
+            return (outputBundle);
         }
     }
 }
