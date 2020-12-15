@@ -7,7 +7,7 @@
         <groupId>net.fhirfactory.pegacorn</groupId>
         <artifactId>pegacorn</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../pegacorn</relativePath>
+        <relativePath>../../pegacorn</relativePath>
     </parent>
 
     <artifactId>pegacorn-ladon</artifactId>
@@ -23,7 +23,7 @@
         <module>../pegacorn-ladon-edge</module>
         <!--module>../pegacorn-ladon-twin</module-->
         <module>../pegacorn-ladon-dtcache</module>
-		<module>../pegacorn-ladon-mdr/pegacorn-ladon-mdr</module>
+		<module>../pegacorn-ladon-mdr</module>
         <module>../pegacorn-ladon-subsystem</module>
     </modules>
 
