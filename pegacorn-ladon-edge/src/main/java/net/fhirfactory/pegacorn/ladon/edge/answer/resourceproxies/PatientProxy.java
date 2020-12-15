@@ -156,15 +156,15 @@ public class PatientProxy extends LadonEdgeSynchronousCRUDResourceBase implement
 
     //
     @Search(queryName = "patientQRYA19")
-    public Bundle getPatientQueryResponse(@RequiredParam(name = Patient.SP_IDENTIFIER) TokenParam identifierParam, @RequiredParam(name = "qrya19") StringParam queryString){
+    public Bundle searchPatientQueryResponse(@RequiredParam(name = Patient.SP_IDENTIFIER) TokenParam identifierParam, @RequiredParam(name = "qrya19") StringParam queryString){
         LOG.debug(".getPatientQueryResponse(): Entry, identifierParam --> {}, qrya19 --> {}", identifierParam, queryString);
 
         HashMap<Property, Serializable> argumentList = new HashMap<>(); // TODO Need to replace "Serializable" with something more meaningful and appropriate
 
         // First Parameter, the DocumentReference.type
         Property subjectProperty = new Property(
-                "subject",
-                "Reference",
+                "identifier",
+                "Identifier",
                 "The person, animal or group on which the procedure was performed.",
                 0,
                 1,

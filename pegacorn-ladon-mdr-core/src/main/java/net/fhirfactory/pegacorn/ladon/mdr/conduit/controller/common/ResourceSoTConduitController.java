@@ -97,10 +97,10 @@ public abstract class ResourceSoTConduitController {
      * @return
      */
     protected List<ResourceSoTConduitActionResponse> getResourceFromEachConduit(Identifier identifier){
-        getLogger().info(".getResourceFromEachConduit(Identifier): Entry, identifier (Identifier)--> {}", identifier);
+        getLogger().debug(".getResourceFromEachConduit(Identifier): Entry, identifier (Identifier)--> {}", identifier);
         ArrayList<ResourceSoTConduitActionResponse> loadedResources = new ArrayList<ResourceSoTConduitActionResponse>();
         for(SoTResourceConduit currentConduit: conduitSet){
-            getLogger().info(".getResourceFromEachConduit(Identifier): trying conduit --> {}", currentConduit.getConduitName());
+            getLogger().debug(".getResourceFromEachConduit(Identifier): trying conduit --> {}", currentConduit.getConduitName());
             ResourceSoTConduitActionResponse currentResponse = currentConduit.getResourceViaIdentifier(identifier);
             if(currentResponse.hasResource() && currentResponse.getStatusEnum().equals(VirtualDBActionStatusEnum.REVIEW_FINISH)) {
                 loadedResources.add(currentResponse);
@@ -211,7 +211,7 @@ public abstract class ResourceSoTConduitController {
      * @return
      */
     protected List<ResourceSoTConduitActionResponse> deleteResourceViaEachConduit(Resource wholeResource){
-        getLogger().debug(".writeResourceToEachConduit(): Entry, wholeResource --> {}", wholeResource);
+        getLogger().debug(".deleteResourceViaEachConduit(): Entry, wholeResource --> {}", wholeResource);
         ArrayList<ResourceSoTConduitActionResponse> outcomeSet = new ArrayList<>();
         for(SoTResourceConduit currentConduit: conduitSet) {
             if(currentConduit.supportsDirectDeleteAction(wholeResource)) {
@@ -219,7 +219,7 @@ public abstract class ResourceSoTConduitController {
                 outcomeSet.add(outcome);
             }
         }
-        getLogger().debug(".writeResourceToEachConduit(): Exit");
+        getLogger().debug(".deleteResourceViaEachConduit(): Exit");
         return(outcomeSet);
     }
 
@@ -228,13 +228,17 @@ public abstract class ResourceSoTConduitController {
     //
 
     protected List<ResourceSoTConduitSearchResponseElement> attemptResourceSearch(SearchNameEnum searchName, Map<Property, Serializable> parameterSet){
-        getLogger().debug(".attemptResourceSearch(): Entry");
+        getLogger().info(".attemptResourceSearch(): Entry");
         ArrayList<ResourceSoTConduitSearchResponseElement> loadedResources = new ArrayList<ResourceSoTConduitSearchResponseElement>();
+        getLogger().info(".attemptResourceSearch(): Iterating through available SoTConduits for Search function");
         for(SoTResourceConduit currentConduit: conduitSet) {
+            if(getLogger().isInfoEnabled()){
+                getLogger().info(".attemptResourceSearch(): SoTConduit --> {}", currentConduit.getConduitName());
+            }
             List<ResourceSoTConduitSearchResponseElement> currentResponse = currentConduit.searchSourceOfTruthUsingCriteria(getResourceType(), searchName, parameterSet);
             loadedResources.addAll(currentResponse);
         }
-        getLogger().debug(".attemptResourceSearch(): Exit");
+        getLogger().info(".attemptResourceSearch(): Exit");
         return(loadedResources);
     }
 
@@ -290,10 +294,11 @@ public abstract class ResourceSoTConduitController {
     }
 
     public VirtualDBMethodOutcome getResourcesViaSearchCriteria(ResourceType resourceType, SearchNameEnum searchName, Map<Property, Serializable> parameterSet) {
-        getLogger().debug(".getResourcesViaSearchCriteria(): Entry");
+        getLogger().debug("ResourceSoTConduitController::getResourcesViaSearchCriteria(): Entry");
         List<ResourceSoTConduitSearchResponseElement> responseElements = this.attemptResourceSearch(searchName, parameterSet);
+        getLogger().trace("ResourceSoTConduitController::getResourcesViaSearchCriteria(): attempted search, now consolidating");
         VirtualDBMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateSearchResultSet(responseElements);
-        getLogger().debug(".getResourcesViaSearchCriteria(): Exit");
+        getLogger().debug("ResourceSoTConduitController::getResourcesViaSearchCriteria(): Exit");
         return(aggregatedMethodOutcome);
     }
 }
