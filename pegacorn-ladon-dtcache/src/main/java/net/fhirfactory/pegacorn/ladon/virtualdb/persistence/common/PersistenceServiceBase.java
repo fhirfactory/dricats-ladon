@@ -72,16 +72,26 @@ public abstract class PersistenceServiceBase extends GenericSTAClientWUPTemplate
     abstract public VirtualDBMethodOutcome synchroniseResource(ResourceType resourceType, Resource resource);
 
     @Override
-    protected String specifyAPIClientName() {
+    protected String specifySTAClientName() {
         return (specifyPersistenceServiceName());
     }
 
     @Override
-    protected String specifyAPIClientVersion() {
+    protected String specifySTAClientVersion() {
         return (specifyPersistenceServiceVersion());
     }
 
     @Override
+    protected String specifySTAWorkshopName() {
+        return "VirtualDB";
+    }
+
+    @Override
+    protected String specifySTAClientType() {
+        return "VirtualDBPersistenceServiceAccessor";
+    }
+
+        @Override
     protected ProcessingPlantServicesInterface specifyProcessingPlant() {
         return (ladonProcessingPlant);
     }
