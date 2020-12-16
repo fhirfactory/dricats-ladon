@@ -137,6 +137,9 @@ public abstract class ResourceDBEngine implements ResourceDBEngineInterface {
     }
 
     private void updateCache(VirtualDBMethodOutcome outcome){
+        if(outcome == null){
+            return;
+        }
         if(outcome.getStatusEnum() != VirtualDBActionStatusEnum.SEARCH_FINISHED) {
             return;
         }
@@ -171,10 +174,10 @@ public abstract class ResourceDBEngine implements ResourceDBEngineInterface {
 
     @Override
     public VirtualDBMethodOutcome getResourcesViaSearchCriteria(ResourceType resourceType, SearchNameEnum searchName, Map<Property, Serializable> parameterSet) {
-        getLogger().debug(".getResourcesViaSearchCriteria(): Entry, ResourceType --> {}, Search Name --> {}", resourceType.toString(), searchName.getSearchName());
+        getLogger().debug("ResourceDBEngine::getResourcesViaSearchCriteria(): Entry, ResourceType --> {}, Search Name --> {}", resourceType.toString(), searchName.getSearchName());
         VirtualDBMethodOutcome outcome = getSourceOfTruthAggregator().getResourcesViaSearchCriteria(resourceType, searchName, parameterSet);
         updateCache(outcome);
-        getLogger().debug(".getResourcesViaSearchCriteria(): Exit");
+        getLogger().debug("ResourceDBEngine::getResourcesViaSearchCriteria(): Exit");
         return(outcome);
     }
 }

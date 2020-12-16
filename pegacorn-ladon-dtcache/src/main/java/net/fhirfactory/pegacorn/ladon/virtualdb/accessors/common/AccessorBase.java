@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionTypeEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
+import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcomeFactory;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.searches.SearchNameEnum;
 import net.fhirfactory.pegacorn.ladon.virtualdb.audit.VirtualDBAuditEntryManager;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.businesskey.VirtualDBKeyManagement;
@@ -103,6 +104,9 @@ abstract public class AccessorBase {
     
     @Inject
     private FHIRContextUtility FHIRContextUtility;
+
+    @Inject
+    private VirtualDBMethodOutcomeFactory outcomeFactory;
 
     @PostConstruct
     protected void initialise() {
@@ -335,6 +339,11 @@ abstract public class AccessorBase {
         getLogger().debug(".searchUsingCriteria(): Entry, Search Name --> {}, parameterSet --> {}", searchName, parameterSet);
         PetasosParcelAuditTrailEntry currentTransaction = this.beginTransaction(parameterSet, VirtualDBActionTypeEnum.SEARCH);
         VirtualDBMethodOutcome outcome = getResourceDBEngine().getResourcesViaSearchCriteria(resourceType, searchName, parameterSet);
+        if(outcome == null){
+            endSearchTransaction(null, 0, VirtualDBActionTypeEnum.SEARCH, false, currentTransaction);
+            outcome = outcomeFactory.generateBadAttributeOutcome(getResourceTypeName()+"searchUsingCriteria",VirtualDBActionTypeEnum.SEARCH,VirtualDBActionStatusEnum.SEARCH_FINISHED,"No Entries");
+            return(outcome);
+        }
         if(outcome.getStatusEnum() == VirtualDBActionStatusEnum.SEARCH_FAILURE) {
             endSearchTransaction(null, 0, VirtualDBActionTypeEnum.SEARCH, false, currentTransaction);
             return(outcome);
