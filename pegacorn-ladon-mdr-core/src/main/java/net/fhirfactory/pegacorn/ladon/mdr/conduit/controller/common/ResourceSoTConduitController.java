@@ -236,7 +236,15 @@ public abstract class ResourceSoTConduitController {
                 getLogger().info(".attemptResourceSearch(): SoTConduit --> {}", currentConduit.getConduitName());
             }
             List<ResourceSoTConduitSearchResponseElement> currentResponse = currentConduit.searchSourceOfTruthUsingCriteria(getResourceType(), searchName, parameterSet);
-            loadedResources.addAll(currentResponse);
+            if(getLogger().isInfoEnabled()){
+                getLogger().info(".attemptResourceSearch(): SoTConduit Search Finished --> {}");
+            }
+            if(currentResponse != null) {
+                if(getLogger().isInfoEnabled()){
+                    getLogger().info(".attemptResourceSearch(): SoTConduit had results --> {}");
+                }
+                loadedResources.addAll(currentResponse);
+            }
         }
         getLogger().info(".attemptResourceSearch(): Exit");
         return(loadedResources);
