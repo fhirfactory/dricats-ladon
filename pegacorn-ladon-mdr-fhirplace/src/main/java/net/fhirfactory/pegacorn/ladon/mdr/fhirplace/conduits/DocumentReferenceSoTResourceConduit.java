@@ -305,43 +305,4 @@ public class DocumentReferenceSoTResourceConduit extends FHIRPlaceSoTConduitComm
         searchResponse.setSoTConduitGrade(SoTConduitGradeEnum.AUTHORITATIVE);
         return(searchResponse);
     }
-
-/*    private ResourceSoTConduitSearchResponseElement getDocumentReferenceByIdentifier(Map<Property, Serializable> parameterSet) {
-        boolean hasDocumentReferenceIdentifierInfo = false;
-        TokenParam documentReferenceIdentifierParam = null;
-        Set<Property> propertyList = parameterSet.keySet();
-        for (Property currentProperty : propertyList) {
-            if (currentProperty.getName().contentEquals("identifier")) {
-                Serializable currentElement = parameterSet.get(currentProperty);
-                if(currentElement instanceof TokenParam) {
-                    documentReferenceIdentifierParam = (TokenParam) currentElement;
-                    hasDocumentReferenceIdentifierInfo = true;
-                    break;
-                }
-            }
-        }
-        ResourceSoTConduitSearchResponseElement searchResponse = new ResourceSoTConduitSearchResponseElement();
-        if(hasDocumentReferenceIdentifierInfo) {
-            String searchURL = "DocumentReference?identifier:of_type=" + documentReferenceIdentifierParam.getSystem() + "|" + documentReferenceIdentifierParam.getValue();
-            Bundle response = getFHIRPlaceShardClient()
-                    .search()
-                    .byUrl(searchURL)
-                    .returnBundle(Bundle.class)
-                    .execute();
-            for(Bundle.BundleEntryComponent entry: response.getEntry()){
-                Resource currentResource = entry.getResource();
-                if(currentResource.getResourceType() == ResourceType.DocumentReference){
-                    searchResponse.addResource(currentResource);
-                }
-            }
-            searchResponse.setResponseResourceGrade(ResourceGradeEnum.THOROUGH);
-            searchResponse.setSoTConduitGrade(SoTConduitGradeEnum.AUTHORITATIVE);
-            return(searchResponse);
-        }
-        return(searchResponse);
-    }
-
-*/
-
-
 }

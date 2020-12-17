@@ -57,6 +57,7 @@ public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit 
     public ResourceSoTConduitActionResponse standardGetResourceViaIdentifier(String resourceName, Identifier identifier){
         getLogger().debug(".standardGetResourceViaIdentifier(): Entry, identifier --> {}", identifier);
         if(getLogger().isDebugEnabled()) {
+            getLogger().debug(".standardGetResourceViaIdentifier(): Entry identifier.system --> {}", identifier.getSystem());
             getLogger().debug(".standardGetResourceViaIdentifier(): Entry identifier.type.system --> {}", identifier.getType().getCodingFirstRep().getSystem());
             getLogger().debug(".standardGetResourceViaIdentifier(): Entry, identifier.type.code --> {}", identifier.getType().getCodingFirstRep().getCode());
             getLogger().debug(".standardGetResourceViaIdentifier(): Entry, identifier.value --> {}", identifier.getValue());

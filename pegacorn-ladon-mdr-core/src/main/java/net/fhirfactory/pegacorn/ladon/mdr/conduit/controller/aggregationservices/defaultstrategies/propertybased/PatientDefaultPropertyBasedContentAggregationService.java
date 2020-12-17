@@ -55,11 +55,12 @@ public class PatientDefaultPropertyBasedContentAggregationService extends Domain
 
     @Override
     protected void aggregateIntoBasePropertyByProperty(ResourceSoTConduitActionResponse baseResponse, ResourceSoTConduitActionResponse additiveResponse) {
+        LOG.debug(".aggregateIntoBasePropertyByProperty(): Entry");
         Patient basePatientResource = (Patient)baseResponse.getResource();
         Patient additivePatientResource = (Patient)baseResponse.getResource();
-        // Merge "identifiers" (Identifier)
+        LOG.trace(".aggregateIntoBasePropertyByProperty(): Merge \"identifiers\" (Identifier)");
         getMergeHelpers().mergeIdentifiers(baseResponse, basePatientResource.getIdentifier(), additiveResponse, additivePatientResource.getIdentifier());
-        // Merge "active" (Set the Active Flag: note, if any are Active, then make this one Active)
+        LOG.trace(".aggregateIntoBasePropertyByProperty(): Merge \"active\" (Set the Active Flag: note, if any are Active, then make this one Active)");
         if(basePatientResource.hasActive() && additivePatientResource.hasActive()){
             if(!basePatientResource.getActive() && additivePatientResource.getActive()){
                 basePatientResource.setActive(true);
@@ -72,57 +73,57 @@ public class PatientDefaultPropertyBasedContentAggregationService extends Domain
                 }
             }
         }
-        // Merge "name" (HumanName)
+        LOG.trace(".aggregateIntoBasePropertyByProperty(): Merge \"name\" (HumanName)");
         getMergeHelpers().mergeHumanNames(baseResponse, basePatientResource.getName(), additiveResponse, additivePatientResource.getName());
-        // Merge "telecom" (ContactPoint)
+        LOG.trace(".aggregateIntoBasePropertyByProperty(): Merge \"telecom\" (ContactPoint)");
         getMergeHelpers().mergeContactPoints(baseResponse, basePatientResource.getTelecom(), additiveResponse, additivePatientResource.getTelecom());
-        // Merge "address" (Address)
+        LOG.trace(".aggregateIntoBasePropertyByProperty(): Merge \"address\" (Address)");
         getMergeHelpers().mergeAddress(baseResponse, basePatientResource.getAddress(), additiveResponse, additivePatientResource.getAddress());
-        // Merge "gender" (Code)
+        LOG.trace(".aggregateIntoBasePropertyByProperty(): Merge \"gender\" (Code)");
         if(basePatientResource.hasGender() && additivePatientResource.hasGender()){
             if(!baseHasPrecedence("gender", baseResponse, additiveResponse)){
                 basePatientResource.setGender(additivePatientResource.getGender());
             }
         }
-        // Merge "deceased" (boolean/dateTime)
+        LOG.trace(".aggregateIntoBasePropertyByProperty(): Merge \"deceased\" (boolean/dateTime)");
         if(!basePatientResource.hasDeceased()){
             if(additivePatientResource.hasDeceased()){
                 basePatientResource.setDeceased(additivePatientResource.getDeceased());
             }
         }
-        // Merge "birthDate" (date)
+        LOG.trace(".aggregateIntoBasePropertyByProperty(): Merge \"birthDate\" (date)");
         if(!basePatientResource.hasBirthDate()){
             if(additivePatientResource.hasBirthDate()){
                 basePatientResource.setBirthDate(additivePatientResource.getBirthDate());
             }
         }
-        // Merge "maritalStatus" (CodeableConcept)
+        LOG.trace(".aggregateIntoBasePropertyByProperty(): Merge \"maritalStatus\" (CodeableConcept)");
         if(!basePatientResource.hasMaritalStatus()){
             if(additivePatientResource.hasMaritalStatus()){
                 basePatientResource.setMaritalStatus(additivePatientResource.getMaritalStatus());
             }
         }
-        // Merge "multiBirth" (boolean/integer)
+        LOG.trace(".aggregateIntoBasePropertyByProperty(): Merge \"multiBirth\" (boolean/integer)");
         if(!basePatientResource.hasMultipleBirth()){
             if(additivePatientResource.hasMultipleBirth()){
                 basePatientResource.setMultipleBirth(additivePatientResource.getMaritalStatus());
             }
         }
-        // Merge "photo" (Attachment)
+        LOG.trace(".aggregateIntoBasePropertyByProperty(): Merge \"photo\" (Attachment)");
         getMergeHelpers().mergeAttachments("photo", baseResponse, basePatientResource.getPhoto(), additiveResponse, additivePatientResource.getPhoto());
-        // Merge "contacts" (BackboneElement)
+        LOG.trace(".aggregateIntoBasePropertyByProperty(): Merge \"contacts\" (BackboneElement)");
         mergeContacts("contacts", baseResponse, basePatientResource.getContact(), additiveResponse, additivePatientResource.getContact());
-        // Merge "communications" (BackboneElement)
+        LOG.trace(".aggregateIntoBasePropertyByProperty(): Merge \"communications\" (BackboneElement)");
         mergeCommunications("communication", baseResponse, basePatientResource.getCommunication(), additiveResponse, additivePatientResource.getCommunication());
-        // Merge "generalPractitioner" (Reference)
+        LOG.trace(".aggregateIntoBasePropertyByProperty(): Merge \"generalPractitioner\" (Reference)");
         getMergeHelpers().mergeReferences(baseResponse, basePatientResource.getGeneralPractitioner(), additiveResponse, additivePatientResource.getGeneralPractitioner());
-        // Merge "managingOrganization" (Reference)
+        LOG.trace(".aggregateIntoBasePropertyByProperty(): Merge \"managingOrganization\" (Reference)");
         if(!basePatientResource.hasManagingOrganization()){
             if(additivePatientResource.hasManagingOrganization()){
                 basePatientResource.setManagingOrganization(additivePatientResource.getManagingOrganization());
             }
         }
-
+        LOG.debug(".aggregateIntoBasePropertyByProperty(): finished");
     }
 
     @Override

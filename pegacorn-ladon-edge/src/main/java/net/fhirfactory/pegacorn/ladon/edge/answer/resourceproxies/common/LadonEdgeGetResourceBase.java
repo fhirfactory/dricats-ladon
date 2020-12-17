@@ -81,6 +81,13 @@ public abstract class LadonEdgeGetResourceBase extends LadonEdgeProxyBase{
             getLogger().warn(".tokenParam2Identifier(): Parameter identifierParam (TokenParam) is null");
             return(null);
         }
+        if(getLogger().isDebugEnabled()){
+            getLogger().debug(".tokenParam2Identifier(): identifierParam.system --> {}", identifierParam.getSystem());
+            getLogger().debug(".tokenParam2Identifier(): identifierParam.value --> {}", identifierParam.getValue());
+            if(identifierParam.getModifier() != null){
+                getLogger().debug(".tokenParam2Identifier(): identifierParam.modifier --> {}", identifierParam.getModifier().getValue());
+            }
+        }
         boolean hasAppropriateModifier = false;
         if(identifierParam.getModifier() == null) {
             getLogger().trace(".tokenParam2Identifier(): There is no modifier present");
@@ -95,13 +102,14 @@ public abstract class LadonEdgeGetResourceBase extends LadonEdgeProxyBase{
         // has been used. 
         if(!hasAppropriateModifier) {
             if(identifierParam.getValue().contains("|")) {
+                getLogger().trace(".tokenParam2Identifier(): identifierParam.value contains pipe separator, treating as \"of_type\"");
                 hasAppropriateModifier = true;
             }
         }
         String identifierValue = null;
         Identifier generatedIdentifier = new Identifier();
+        generatedIdentifier.setSystem(identifierParam.getSystem());
         if(hasAppropriateModifier){
-            String identifierTypeSystemValue = identifierParam.getSystem();
             String identifierTypeCodeValue = null;
             String paramValue = identifierParam.getValue();
             String[] values = paramValue.split("\\|");
@@ -110,13 +118,12 @@ public abstract class LadonEdgeGetResourceBase extends LadonEdgeProxyBase{
             CodeableConcept identifierType = new CodeableConcept();
             Coding identifierTypeCode = new Coding();
             identifierTypeCode.setCode(identifierTypeCodeValue);
-            identifierTypeCode.setSystem(identifierTypeSystemValue);
+            identifierTypeCode.setSystem(identifierParam.getSystem());
             identifierType.addCoding(identifierTypeCode);
-            identifierType.setText(identifierTypeSystemValue + ":" + identifierTypeCodeValue);
+            identifierType.setText(identifierParam.getSystem() + ":" + identifierTypeCodeValue);
             generatedIdentifier.setType(identifierType);
         } 
         else {
-            generatedIdentifier.setSystem(identifierParam.getSystem());
             identifierValue = identifierParam.getValue();
         }
         generatedIdentifier.setValue(identifierValue);
