@@ -29,6 +29,7 @@ import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBAction
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,11 @@ public class TaskDefaultResourceBasedContentAggregationService extends WholeReso
     @Override
     protected String getAggregationServiceName() {
         return ("TaskDefaultResourceContentAggregationService");
+    }
+
+    @Override
+    protected ResourceType getResourceType() {
+        return (ResourceType.Task);
     }
 
     @Override

@@ -54,6 +54,11 @@ public class PatientDefaultPropertyBasedContentAggregationService extends Domain
     }
 
     @Override
+    protected ResourceType getResourceType() {
+        return (ResourceType.Patient);
+    }
+
+    @Override
     protected void aggregateIntoBasePropertyByProperty(ResourceSoTConduitActionResponse baseResponse, ResourceSoTConduitActionResponse additiveResponse) {
         LOG.debug(".aggregateIntoBasePropertyByProperty(): Entry");
         Patient basePatientResource = (Patient)baseResponse.getResource();
