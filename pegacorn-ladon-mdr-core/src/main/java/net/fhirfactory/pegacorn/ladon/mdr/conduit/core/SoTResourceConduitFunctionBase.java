@@ -62,7 +62,7 @@ public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit 
             getLogger().debug(".standardGetResourceViaIdentifier(): Entry, identifier.type.code --> {}", identifier.getType().getCodingFirstRep().getCode());
             getLogger().debug(".standardGetResourceViaIdentifier(): Entry, identifier.value --> {}", identifier.getValue());
         }
-        String activityLocation = resourceName + "SoTResourceConduit::standardGetResourceViaIdentifier()";
+        String activityLocation = resourceName + "::SoTResourceConduit::standardGetResourceViaIdentifier()";
         Resource retrievedResource = (Resource)getFHIRServiceAccessor().findResourceByIdentifier(resourceName, identifier);
         if (retrievedResource == null){
             // There was no response to the query or it was in error....

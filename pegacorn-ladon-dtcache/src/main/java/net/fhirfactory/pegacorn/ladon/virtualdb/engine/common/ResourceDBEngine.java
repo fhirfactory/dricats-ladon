@@ -21,6 +21,7 @@
  */
 package net.fhirfactory.pegacorn.ladon.virtualdb.engine.common;
 
+import net.fhirfactory.pegacorn.deployment.properties.LadonDefaultDeploymentProperties;
 import net.fhirfactory.pegacorn.ladon.mdr.conduit.controller.common.ResourceSoTConduitController;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.ResourceDBEngineInterface;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
@@ -34,6 +35,8 @@ import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import java.io.Serializable;
+import java.sql.Date;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -42,6 +45,9 @@ public abstract class ResourceDBEngine implements ResourceDBEngineInterface {
 
     @Inject
     private VirtualDBMethodOutcomeFactory outcomeFactory;
+
+    @Inject
+    private LadonDefaultDeploymentProperties ladonDefaultDeploymentProperties;
 
     abstract protected VirtualDBIdTypeBasedCacheBase specifyDBCache();
 
@@ -97,26 +103,58 @@ public abstract class ResourceDBEngine implements ResourceDBEngineInterface {
         return (outcome);
     }
 
+    /**
+     * This function retrieves a Resource using the IdType id.
+     *
+     * If the resource is presently within the cache, it returns that instance
+     *
+     * If the resource is not in the cache, the Pegacorn Persistence Service is queried to see if the resource has been
+     * previously loaded. If it has, then the version within the Persistence Service will contain mappings to the
+     * per-SoT internal identifier for that resource. It will then iterate through the SoTs using the ids and
+     * aggregate the result. Note that if the last time the resource was accessed exceeds a given threshold, then the
+     * Identifiers contained within the aggregated instance within the Persistence Service will be used to extract
+     * the resource from ALL known SoT's supporting that resource type. THis allows for the introduction of new SoT
+     * Conduits.
+     *
+     * If there is no resource with the given id within the Pegacorn Persistence Service, then the retrieval is said
+     * to have failed.
+     *
+     * @param id The "internal" id of the Resource
+     * @return A VirtualDBMethodOutcome detailing the success (or otherwise) of the action. A .getResource() on the
+     * returned object will retrieve the Resource in question if the retrieval was successful.
+     */
     @Override
-    public VirtualDBMethodOutcome getResource(IdType id){
+    public VirtualDBMethodOutcome getResource(IdType id) {
+        getLogger().debug(".getResource(IdType): Entry, id --> {}", id);
+        getLogger().trace(".getResource(IdType): Check to see if there is an entry in the cache");
         VirtualDBMethodOutcome outcome = getDBCache().getResource(id);
-        if(outcome.getStatusEnum() == VirtualDBActionStatusEnum.REVIEW_FAILURE){
-            VirtualDBMethodOutcome persistenceServiceOutcome = getPersistenceService().getResourceById(getResourceType().toString(), id);
-            if(persistenceServiceOutcome.getStatusEnum() == VirtualDBActionStatusEnum.REVIEW_FINISH){
-                Resource persistenceServiceOriginatedResource = (Resource)persistenceServiceOutcome.getResource();
-                List<Identifier> identifierList = resolveIdentifierSet(persistenceServiceOriginatedResource);
-                if(identifierList.isEmpty()) {
-                    outcome = outcomeFactory.generateEmptyGetResponse(getResourceType(), id);
-                } else {
-                    outcome = getSourceOfTruthAggregator().reviewResource(identifierList);
+        if (outcome.getResource() != null && outcome.getStatusEnum().equals(VirtualDBActionStatusEnum.REVIEW_FINISH)) {
+            getLogger().debug(".getResource(IdType): Resource is in cache, returning it");
+        }
+        getLogger().trace(".getResource(IdType): Check to see if the Resource is available within Pegacorn's Persistence Service");
+        VirtualDBMethodOutcome persistenceServiceOutcome = getPersistenceService().getResourceById(getResourceType().toString(), id);
+        if (outcome.getResource() != null && persistenceServiceOutcome.getStatusEnum().equals(VirtualDBActionStatusEnum.REVIEW_FINISH)) {
+            Resource persistenceServiceOriginatedResource = (Resource) persistenceServiceOutcome.getResource();
+            boolean requiresRefresh = true;
+            if(persistenceServiceOriginatedResource.getMeta().hasLastUpdated()){
+                Long resourceRefreshAge = Date.from(Instant.now()).getTime() - ladonDefaultDeploymentProperties.getResourceSourceOfTruthConduitScanningPeriod();
+                if(persistenceServiceOriginatedResource.getMeta().getLastUpdated().getTime() > resourceRefreshAge ){
+                    requiresRefresh = false;
                 }
-                return (outcome);
-            } else {
-                outcome = outcomeFactory.generateEmptyGetResponse(getResourceType(), id);
-                return(outcome);
             }
+            if(requiresRefresh){
+
+            }
+            List<Identifier> identifierList = resolveIdentifierSet(persistenceServiceOriginatedResource);
+            if (identifierList.isEmpty()) {
+                outcome = outcomeFactory.generateEmptyGetResponse(getResourceType(), id);
+            } else {
+                outcome = getSourceOfTruthAggregator().reviewResource(identifierList);
+            }
+            return (outcome);
         } else {
-            return(outcome);
+            outcome = outcomeFactory.generateEmptyGetResponse(getResourceType(), id);
+            return (outcome);
         }
     }
 

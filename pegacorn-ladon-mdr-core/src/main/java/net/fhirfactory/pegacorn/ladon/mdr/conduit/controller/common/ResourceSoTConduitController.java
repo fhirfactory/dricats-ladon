@@ -133,31 +133,6 @@ public abstract class ResourceSoTConduitController {
     }
 
     //
-    // Review / Get Conduit Invocation
-    //
-
-    /**
-     *
-     * @param identifiers
-     * @return
-     */
-    protected List<ResourceSoTConduitActionResponse> getResourceFromEachConduit(List<Identifier> identifiers){
-        getLogger().debug(".getResourceFromEachConduit(): Entry, identifiers (List<Identifier>)--> {}", identifiers);
-        ArrayList<ResourceSoTConduitActionResponse> loadedResources = new ArrayList<ResourceSoTConduitActionResponse>();
-        for(SoTResourceConduit currentConduit: conduitSet){
-            for(Identifier identifier: identifiers) {
-                ResourceSoTConduitActionResponse currentResponse = currentConduit.getResourceViaIdentifier(identifier);
-                if (currentResponse.getStatusEnum().equals(VirtualDBActionStatusEnum.REVIEW_FINISH)) {
-                    getLogger().trace(".getResourceFromEachConduit(): adding SoTResponse to ResponseList!");
-                    loadedResources.add(currentResponse);
-                }
-            }
-        }
-        getLogger().debug(".getResourceFromEachConduit(): Exit, Number of Elements in List --> {}", loadedResources.size());
-        return(loadedResources);
-    }
-
-    //
     // Create Conduit Invocation
     //
 
@@ -279,12 +254,6 @@ public abstract class ResourceSoTConduitController {
 
     public VirtualDBMethodOutcome reviewResource(IdType id) {
         List<ResourceSoTConduitActionResponse> methodOutcomes = this.getResourceFromEachConduit(id);
-        VirtualDBMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateGetResponseSet(methodOutcomes);
-        return(aggregatedMethodOutcome);
-    }
-
-    public VirtualDBMethodOutcome reviewResource(List<Identifier> identifiers) {
-        List<ResourceSoTConduitActionResponse> methodOutcomes = this.getResourceFromEachConduit(identifiers);
         VirtualDBMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateGetResponseSet(methodOutcomes);
         return(aggregatedMethodOutcome);
     }
