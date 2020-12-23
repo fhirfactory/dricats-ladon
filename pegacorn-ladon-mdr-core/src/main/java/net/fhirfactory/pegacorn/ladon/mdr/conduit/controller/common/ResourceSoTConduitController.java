@@ -76,6 +76,7 @@ public abstract class ResourceSoTConduitController {
     }
 
     abstract protected ResourceType specifyResourceType();
+
     abstract protected ResourceContentAggregationServiceBase specifyAggregationService();
 
     protected ResourceType getResourceType(){
@@ -129,31 +130,6 @@ public abstract class ResourceSoTConduitController {
             }
         }
         getLogger().debug(".getResourceFromEachConduit(IdType): Exit");
-        return(loadedResources);
-    }
-
-    //
-    // Review / Get Conduit Invocation
-    //
-
-    /**
-     *
-     * @param identifiers
-     * @return
-     */
-    protected List<ResourceSoTConduitActionResponse> getResourceFromEachConduit(List<Identifier> identifiers){
-        getLogger().debug(".getResourceFromEachConduit(): Entry, identifiers (List<Identifier>)--> {}", identifiers);
-        ArrayList<ResourceSoTConduitActionResponse> loadedResources = new ArrayList<ResourceSoTConduitActionResponse>();
-        for(SoTResourceConduit currentConduit: conduitSet){
-            for(Identifier identifier: identifiers) {
-                ResourceSoTConduitActionResponse currentResponse = currentConduit.getResourceViaIdentifier(identifier);
-                if (currentResponse.getStatusEnum().equals(VirtualDBActionStatusEnum.REVIEW_FINISH)) {
-                    getLogger().trace(".getResourceFromEachConduit(): adding SoTResponse to ResponseList!");
-                    loadedResources.add(currentResponse);
-                }
-            }
-        }
-        getLogger().debug(".getResourceFromEachConduit(): Exit, Number of Elements in List --> {}", loadedResources.size());
         return(loadedResources);
     }
 
@@ -237,16 +213,16 @@ public abstract class ResourceSoTConduitController {
             }
             List<ResourceSoTConduitSearchResponseElement> currentResponse = currentConduit.searchSourceOfTruthUsingCriteria(getResourceType(), searchName, parameterSet);
             if(getLogger().isInfoEnabled()){
-                getLogger().info(".attemptResourceSearch(): SoTConduit Search Finished --> {}");
+                getLogger().info(".attemptResourceSearch(): SoTConduit Search Finished");
             }
             if(currentResponse != null) {
                 if(getLogger().isInfoEnabled()){
-                    getLogger().info(".attemptResourceSearch(): SoTConduit had results --> {}");
+                    getLogger().info(".attemptResourceSearch(): SoTConduit had results");
                 }
                 loadedResources.addAll(currentResponse);
             }
         }
-        getLogger().info(".attemptResourceSearch(): Exit");
+        getLogger().info(".attemptResourceSearch(): Exit, result set size --> {}", loadedResources.size());
         return(loadedResources);
     }
 
@@ -279,12 +255,6 @@ public abstract class ResourceSoTConduitController {
 
     public VirtualDBMethodOutcome reviewResource(IdType id) {
         List<ResourceSoTConduitActionResponse> methodOutcomes = this.getResourceFromEachConduit(id);
-        VirtualDBMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateGetResponseSet(methodOutcomes);
-        return(aggregatedMethodOutcome);
-    }
-
-    public VirtualDBMethodOutcome reviewResource(List<Identifier> identifiers) {
-        List<ResourceSoTConduitActionResponse> methodOutcomes = this.getResourceFromEachConduit(identifiers);
         VirtualDBMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateGetResponseSet(methodOutcomes);
         return(aggregatedMethodOutcome);
     }

@@ -26,6 +26,7 @@ import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActi
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,11 @@ public class PractitionerDefaultPropertyBasedContentAggregationService extends D
             return(bestIdentifier);
         }
         return(null);
+    }
+
+    @Override
+    protected ResourceType getResourceType() {
+        return (ResourceType.Practitioner);
     }
 
     @Override

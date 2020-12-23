@@ -166,4 +166,28 @@ public class VirtualDBMethodOutcomeFactory {
         return(vdbOutcome);
     }
 
+    public VirtualDBMethodOutcome generateEmptySearchResponse(ResourceType resourceType){
+        VirtualDBMethodOutcome outcome = new VirtualDBMethodOutcome();
+        outcome.setCreated(false);
+        outcome.setCausalAction(VirtualDBActionTypeEnum.SEARCH);
+        outcome.setStatusEnum(VirtualDBActionStatusEnum.SEARCH_FAILURE);
+        CodeableConcept details = new CodeableConcept();
+        Coding detailsCoding = new Coding();
+        detailsCoding.setSystem("https://www.hl7.org/fhir/codesystem-operation-outcome.html");
+        detailsCoding.setCode("TODO:: Document");
+        String text = "TODO:: Document";
+        detailsCoding.setDisplay(text);
+        details.setText(text);
+        details.addCoding(detailsCoding);
+        OperationOutcome opOutcome = new OperationOutcome();
+        OperationOutcome.OperationOutcomeIssueComponent newOutcomeComponent = new OperationOutcome.OperationOutcomeIssueComponent();
+        newOutcomeComponent.setDiagnostics(resourceType.toString());
+        newOutcomeComponent.setDetails(details);
+        newOutcomeComponent.setCode(OperationOutcome.IssueType.NOTFOUND);
+        newOutcomeComponent.setSeverity(OperationOutcome.IssueSeverity.WARNING);
+        opOutcome.addIssue(newOutcomeComponent);
+        outcome.setOperationOutcome(opOutcome);
+        return(outcome);
+    }
+
 }

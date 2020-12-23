@@ -54,6 +54,11 @@ public class PractitionerRoleDefaultPropertyBasedContentAggregationService exten
     }
 
     @Override
+    protected ResourceType getResourceType() {
+        return (ResourceType.PractitionerRole);
+    }
+
+    @Override
     protected void addIdentifier(Resource resource, Identifier ridIdentifier) {
         if(resource == null){
             return;

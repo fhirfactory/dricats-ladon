@@ -20,6 +20,7 @@ public abstract class ResourceContentAggregationServiceBase {
     protected abstract Identifier getBestIdentifier(Resource resource);
     protected abstract void addIdentifier(Resource resource, Identifier ridIdentifier);
     protected abstract List<Identifier> getIdentifiers(ResourceSoTConduitActionResponse actionResponse);
+    protected abstract ResourceType getResourceType();
 
     @Inject
     private VirtualDBKeyManagement VirtualDBKeyHelpers;

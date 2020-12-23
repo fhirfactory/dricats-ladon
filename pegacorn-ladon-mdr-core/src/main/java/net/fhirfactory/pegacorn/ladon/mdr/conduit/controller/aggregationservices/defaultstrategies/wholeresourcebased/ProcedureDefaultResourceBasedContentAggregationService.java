@@ -29,6 +29,7 @@ import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethod
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Procedure;
 import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,11 @@ public class ProcedureDefaultResourceBasedContentAggregationService extends Whol
     @Override
     protected String getAggregationServiceName() {
         return ("ProcedureDefaultResourceBasedContentAggregationService");
+    }
+
+    @Override
+    protected ResourceType getResourceType() {
+        return (ResourceType.Procedure);
     }
 
     @Override
