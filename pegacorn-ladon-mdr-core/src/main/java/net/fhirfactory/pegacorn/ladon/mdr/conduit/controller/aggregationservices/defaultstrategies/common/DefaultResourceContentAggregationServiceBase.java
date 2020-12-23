@@ -34,13 +34,12 @@ import java.util.List;
 
 public abstract class DefaultResourceContentAggregationServiceBase extends ResourceContentAggregationServiceBase {
 
-
-
     //
     // Shared Methods
     //
 
     protected VirtualDBMethodOutcome generateBadAttributeOutcome(String method, VirtualDBActionTypeEnum action, String text){
+        getLogger().debug(".generateBadAttributeOutcome(): Entry, method --> {}, action --> {}, text --> {}", method, action, text);
         VirtualDBMethodOutcome vdbOutcome = new VirtualDBMethodOutcome();
         vdbOutcome.setCreated(false);
         vdbOutcome.setCausalAction(action);
@@ -78,10 +77,12 @@ public abstract class DefaultResourceContentAggregationServiceBase extends Resou
         newOutcomeComponent.setSeverity(OperationOutcome.IssueSeverity.ERROR);
         opOutcome.addIssue(newOutcomeComponent);
         vdbOutcome.setOperationOutcome(opOutcome);
+        getLogger().debug(".generateBadAttributeOutcome(): Exit");
         return(vdbOutcome);
     }
 
     protected VirtualDBMethodOutcome createFailedSearchOutcome(String conduitName, String failedMethodName){
+        getLogger().debug(".createFailedSearchOutcome(): Entry, conduitName --> {}, failedMethodName -->{}", conduitName, failedMethodName);
         VirtualDBMethodOutcome failedSearchOutcome = new VirtualDBMethodOutcome();
         failedSearchOutcome.setCreated(false);
         failedSearchOutcome.setCausalAction(VirtualDBActionTypeEnum.SEARCH);
@@ -102,10 +103,12 @@ public abstract class DefaultResourceContentAggregationServiceBase extends Resou
         newOutcomeComponent.setSeverity(OperationOutcome.IssueSeverity.ERROR);
         opOutcome.addIssue(newOutcomeComponent);
         failedSearchOutcome.setOperationOutcome(opOutcome);
+        getLogger().debug(".createFailedSearchOutcome(): Exit");
         return(failedSearchOutcome);
     }
 
     protected boolean successfulCompletion(VirtualDBActionStatusEnum status){
+        getLogger().debug(".successfulCompletion(): Entry, status --> {}", status);
         switch(status){
             case CREATION_FINISH:
             case REVIEW_FINISH:
@@ -113,13 +116,16 @@ public abstract class DefaultResourceContentAggregationServiceBase extends Resou
             case UPDATE_FINISH:
             case SYNC_FINISHED:
             case SEARCH_FINISHED:
+                getLogger().debug(".successfulCompletion(): Exit, returning \"success\"");
                 return(true);
             default:
+                getLogger().debug(".successfulCompletion(): Exit, returning \"failure\"");
                 return(false);
         }
     }
 
     protected Bundle assembleSearchResultBundle(List<ResourceSoTConduitSearchResponseElement> searchOutcomeList){
+        getLogger().debug(".assembleSearchResultBundle(): Entry");
         Bundle searchResultBundle = new Bundle();
         searchResultBundle.setType(Bundle.BundleType.SEARCHSET);
         searchResultBundle.setTimestamp(Date.from(Instant.now()));
@@ -137,6 +143,7 @@ public abstract class DefaultResourceContentAggregationServiceBase extends Resou
             }
         }
         searchResultBundle.setTotal(entryCount);
+        getLogger().debug(".assembleSearchResultBundle(): Exit");
         return(searchResultBundle);
     }
 }

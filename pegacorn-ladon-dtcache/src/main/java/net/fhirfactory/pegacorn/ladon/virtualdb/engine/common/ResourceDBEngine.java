@@ -127,7 +127,7 @@ public abstract class ResourceDBEngine implements ResourceDBEngineInterface {
     public VirtualDBMethodOutcome getResource(IdType id) {
         getLogger().debug(".getResource(IdType): Entry, id --> {}", id);
         getLogger().trace(".getResource(IdType): Check to see if there is an entry in the cache");
-        VirtualDBMethodOutcome outcome = getDBCache().getResource(id);
+/*        VirtualDBMethodOutcome outcome = getDBCache().getResource(id);
         if (outcome.getResource() != null && outcome.getStatusEnum().equals(VirtualDBActionStatusEnum.REVIEW_FINISH)) {
             getLogger().debug(".getResource(IdType): Resource is in cache, returning it");
         }
@@ -155,7 +155,9 @@ public abstract class ResourceDBEngine implements ResourceDBEngineInterface {
         } else {
             outcome = outcomeFactory.generateEmptyGetResponse(getResourceType(), id);
             return (outcome);
-        }
+        } */
+        VirtualDBMethodOutcome outcome = outcomeFactory.generateEmptyGetResponse(getResourceType(), id);
+        return (outcome);
     }
 
     @Override

@@ -28,6 +28,7 @@ import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBAction
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,11 @@ public class ValueSetDefaultResourceBasedContentAggregationService extends Whole
     @Override
     protected String getAggregationServiceName() {
         return ("ValueSetDefaultResourceBasedContentAggregationService");
+    }
+
+    @Override
+    protected ResourceType getResourceType() {
+        return (ResourceType.ValueSet);
     }
 
     @Override

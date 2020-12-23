@@ -29,6 +29,7 @@ import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethod
 import org.hl7.fhir.r4.model.DocumentReference;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +52,11 @@ public class DocumentReferecenDefaultResourceBasedAggregationService extends Who
 
     @Override
     protected Logger getLogger(){return(LOG);}
+
+    @Override
+    protected ResourceType getResourceType() {
+        return (ResourceType.DocumentReference);
+    }
 
     @Override
     protected String getAggregationServiceName() {

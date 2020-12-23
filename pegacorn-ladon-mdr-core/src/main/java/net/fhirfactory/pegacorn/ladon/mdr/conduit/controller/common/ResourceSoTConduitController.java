@@ -76,6 +76,7 @@ public abstract class ResourceSoTConduitController {
     }
 
     abstract protected ResourceType specifyResourceType();
+
     abstract protected ResourceContentAggregationServiceBase specifyAggregationService();
 
     protected ResourceType getResourceType(){
@@ -212,16 +213,16 @@ public abstract class ResourceSoTConduitController {
             }
             List<ResourceSoTConduitSearchResponseElement> currentResponse = currentConduit.searchSourceOfTruthUsingCriteria(getResourceType(), searchName, parameterSet);
             if(getLogger().isInfoEnabled()){
-                getLogger().info(".attemptResourceSearch(): SoTConduit Search Finished --> {}");
+                getLogger().info(".attemptResourceSearch(): SoTConduit Search Finished");
             }
             if(currentResponse != null) {
                 if(getLogger().isInfoEnabled()){
-                    getLogger().info(".attemptResourceSearch(): SoTConduit had results --> {}");
+                    getLogger().info(".attemptResourceSearch(): SoTConduit had results");
                 }
                 loadedResources.addAll(currentResponse);
             }
         }
-        getLogger().info(".attemptResourceSearch(): Exit");
+        getLogger().info(".attemptResourceSearch(): Exit, result set size --> {}", loadedResources.size());
         return(loadedResources);
     }
 

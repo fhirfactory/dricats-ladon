@@ -27,17 +27,30 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.bundle.BundleContentHelper;
 import net.fhirfactory.pegacorn.ladon.mdr.conduit.controller.aggregationservices.defaultstrategies.common.DefaultResourceContentAggregationServiceBase;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceGradeEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponse;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitSearchResponseElement;
+import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionTypeEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
+import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcomeFactory;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.OperationOutcome;
 
 public abstract class PerPropertyBasedContentAggregationServiceBase extends DefaultResourceContentAggregationServiceBase {
 
     @Inject
     private PerPropertyMergeHelpers mergeHelpers;
+
+    @Inject
+    private VirtualDBMethodOutcomeFactory outcomeFactory;
+
+    @Inject
+    private BundleContentHelper bundleHelper;
 
     abstract protected void aggregateIntoBasePropertyByProperty(ResourceSoTConduitActionResponse baseResource, ResourceSoTConduitActionResponse additiveResource);
     abstract protected void aggregateResourceSuperClassByAttribute(ResourceSoTConduitActionResponse baseResponse, ResourceSoTConduitActionResponse additiveResponse);
@@ -80,7 +93,36 @@ public abstract class PerPropertyBasedContentAggregationServiceBase extends Defa
 
     @Override
     public VirtualDBMethodOutcome aggregateSearchResultSet(List<ResourceSoTConduitSearchResponseElement> responseSet) {
-        return null;
+        getLogger().debug(".aggregateSearchResultSet(): Entry");
+        if(responseSet.size() != 1){
+            VirtualDBMethodOutcome outcome = outcomeFactory.generateEmptySearchResponse(getResourceType());
+            getLogger().debug(".aggregateSearchResultSet(): Exit, has more or less than a single entry");
+            return(outcome);
+        }
+        Bundle outcomeBundle = bundleHelper.buildSearchResponseBundle(responseSet.get(0).getResources().get(0)) ;
+        VirtualDBMethodOutcome outcome = new VirtualDBMethodOutcome();
+        outcome.setCreated(false);
+        outcome.setCausalAction(VirtualDBActionTypeEnum.SEARCH);
+        outcome.setStatusEnum(VirtualDBActionStatusEnum.SEARCH_FINISHED);
+        CodeableConcept details = new CodeableConcept();
+        Coding detailsCoding = new Coding();
+        detailsCoding.setSystem("https://www.hl7.org/fhir/codesystem-operation-outcome.html");
+        detailsCoding.setCode("TODO:: Document");
+        String text = "TODO:: Document";
+        detailsCoding.setDisplay(text);
+        details.setText(text);
+        details.addCoding(detailsCoding);
+        OperationOutcome opOutcome = new OperationOutcome();
+        OperationOutcome.OperationOutcomeIssueComponent newOutcomeComponent = new OperationOutcome.OperationOutcomeIssueComponent();
+        newOutcomeComponent.setDiagnostics(getResourceType().toString());
+        newOutcomeComponent.setDetails(details);
+        newOutcomeComponent.setCode(OperationOutcome.IssueType.INFORMATIONAL);
+        newOutcomeComponent.setSeverity(OperationOutcome.IssueSeverity.INFORMATION);
+        opOutcome.addIssue(newOutcomeComponent);
+        outcome.setOperationOutcome(opOutcome);
+        outcome.setResource(outcomeBundle);
+        getLogger().debug(".aggregateSearchResultSet(): Exit, returning a single result for search");
+        return(outcome);
     }
 
     //

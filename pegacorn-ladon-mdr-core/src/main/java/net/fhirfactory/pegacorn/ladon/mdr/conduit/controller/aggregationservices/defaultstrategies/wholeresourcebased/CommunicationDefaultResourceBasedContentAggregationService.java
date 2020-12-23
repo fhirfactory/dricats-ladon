@@ -29,6 +29,7 @@ import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethod
 import org.hl7.fhir.r4.model.Communication;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +51,11 @@ public class CommunicationDefaultResourceBasedContentAggregationService extends 
 
     @Override
     protected Logger getLogger(){return(LOG);}
+
+    @Override
+    protected ResourceType getResourceType() {
+        return (ResourceType.Communication);
+    }
 
     @Override
     protected void addIdentifier(Resource resource, Identifier ridIdentifier) {
