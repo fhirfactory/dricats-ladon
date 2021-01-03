@@ -9,7 +9,7 @@
         <relativePath>../pegacorn-ladon</relativePath>
     </parent>
     
-    <artifactId>pegacorn-ladon-dtcache</artifactId>
+    <artifactId>pegacorn-ladon-virtualdb</artifactId>
     <name>Pegacorn :: Ladon :: Virtual Database</name>
     <packaging>jar</packaging>
 
