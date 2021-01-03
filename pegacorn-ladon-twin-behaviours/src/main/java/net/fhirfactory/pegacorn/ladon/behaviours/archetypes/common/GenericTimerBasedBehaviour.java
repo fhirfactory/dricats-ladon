@@ -21,7 +21,11 @@
  */
 package net.fhirfactory.pegacorn.ladon.behaviours.archetypes.common;
 
+import net.fhirfactory.pegacorn.ladon.model.behaviours.BehaviourTypeEnum;
 import org.apache.camel.builder.RouteBuilder;
 
-abstract public class GenericTimerBasedBehaviour extends RouteBuilder {
+abstract public class GenericTimerBasedBehaviour extends GenericBehaviour {
+
+    @Override
+    protected BehaviourTypeEnum specifyBehaviourType(){return(BehaviourTypeEnum.STIMULI_BASED_BEHAVIOUR);}
 }

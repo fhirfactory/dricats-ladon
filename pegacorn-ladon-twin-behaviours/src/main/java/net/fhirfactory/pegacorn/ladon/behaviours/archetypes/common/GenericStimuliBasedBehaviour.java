@@ -22,41 +22,31 @@
 package net.fhirfactory.pegacorn.ladon.behaviours.archetypes.common;
 
 import net.fhirfactory.pegacorn.ladon.behaviours.framework.manager.BehaviourRouteManager;
-import net.fhirfactory.pegacorn.ladon.model.behaviours.ExplicitStimulus2TwinInstanceMap;
-import net.fhirfactory.pegacorn.ladon.model.stimuli.StimulusType;
-import net.fhirfactory.pegacorn.ladon.statespace.stimuli.model.BehaviourCentricExclusiveFilterRulesInterface;
-import net.fhirfactory.pegacorn.ladon.statespace.stimuli.model.BehaviourCentricInclusiveFilterRulesInterface;
-import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.stimulicollector.common.TwinStimuliCollectorBase;
-import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.twinorchestrator.common.TwinOrchestratorBase;
+import net.fhirfactory.pegacorn.ladon.model.behaviours.BehaviourCentricExclusionFilterRulesInterface;
+import net.fhirfactory.pegacorn.ladon.model.behaviours.BehaviourCentricInclusionFilterRulesInterface;
+import net.fhirfactory.pegacorn.ladon.model.behaviours.BehaviourIdentifier;
+import net.fhirfactory.pegacorn.ladon.model.behaviours.BehaviourTypeEnum;
+import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.stimulusbased.encapsulatorroutes.common.TwinTypeBaseBehaviourEncapsulatorRouteWUP;
 import net.fhirfactory.pegacorn.petasos.model.topics.TopicToken;
-import net.fhirfactory.pegacorn.petasos.wup.archetypes.LadonStimuliTriggeredBehaviourWUP;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class GenericStimuliBasedBehaviour extends LadonStimuliTriggeredBehaviourWUP {
-    private static final Logger LOG = LoggerFactory.getLogger(GenericStimuliBasedBehaviour.class);
-
-    private static final String BEHAVIOUR_WORKSHOP = "Behaviours";
-
-    private String name;
-    private String ingresFeed;
-    private String egressFeed;
+public abstract class GenericStimuliBasedBehaviour extends GenericBehaviour {
 
     @Inject
     private BehaviourRouteManager behaviourRouteMgr;
 
-    abstract protected String specifyBehaviourName();
-    abstract protected String specifyBehaviourVersion();
-    abstract protected List<BehaviourCentricExclusiveFilterRulesInterface> negativeFilterSet();
-    abstract protected List<BehaviourCentricInclusiveFilterRulesInterface> positiveFilterSet();
+    abstract protected List<BehaviourCentricExclusionFilterRulesInterface> exclusionFilterSet();
+    abstract protected List<BehaviourCentricInclusionFilterRulesInterface> inclusionFilterSet();
 
-    abstract protected TwinStimuliCollectorBase getMyCollectorService();
-    abstract protected TwinOrchestratorBase getMyTwinOrchestrationService();
+    abstract protected TwinTypeBaseBehaviourEncapsulatorRouteWUP getEncapsulatingWUP();
+
+    @Override
+    protected BehaviourTypeEnum specifyBehaviourType(){return(BehaviourTypeEnum.STIMULI_BASED_BEHAVIOUR);}
 
     /**
      * Within the context of a Behaviour, it extracts the Type of Resource (set) that this Behaviour is expecting for
@@ -71,70 +61,39 @@ public abstract class GenericStimuliBasedBehaviour extends LadonStimuliTriggered
      *
      * @return An empty TopicToken set.
      */
-    @Override
     protected Set<TopicToken> specifySubscriptionTopics() {
-        LOG.debug(".specifySubscriptionTopics(): Entry");
+        getLogger().debug(".specifySubscriptionTopics(): Entry");
         //
         // 1st, lets do the (macro) Topic (Stimulus) registration process
         //
-        LOG.trace(".specifySubscriptionTopics(): First, get the DigitalTwinStimulusSubscriptionCriteriaInterface list");
-        for(BehaviourCentricInclusiveFilterRulesInterface positiveFilterRulesInterface: positiveFilterSet()){
-            for(StimulusType requestedStimulus: positiveFilterRulesInterface.positiveStaticFilterStimulus()){
-                TopicToken currentToken =  requestedStimulus.getAsTopicToken();
-                LOG.trace(".specifySubscriptionTopics(): Topic of interest --> {}", currentToken);
-                LOG.trace(".specifySubscriptionTopics(): Now, append the right discriminator so as to get the Topics ONLY from the PubSub service");
+        getLogger().trace(".specifySubscriptionTopics(): First, get the DigitalTwinStimulusSubscriptionCriteriaInterface list");
+        ArrayList<TopicToken> subscribedTopics = new ArrayList<>();
+        for(BehaviourCentricInclusionFilterRulesInterface positiveFilterRulesInterface: inclusionFilterSet()){
+            for(TopicToken currentToken: positiveFilterRulesInterface.positiveStaticFilterStimulus()){
+                getLogger().trace(".specifySubscriptionTopics(): Topic of interest --> {}", currentToken);
+                getLogger().trace(".specifySubscriptionTopics(): Now, append the right discriminator so as to get the Topics ONLY from the PubSub service");
                 currentToken.addDescriminator("Source", "Ladon.StateSpace.PubSub");
-                LOG.trace(".specifySubscriptionTopics(): Call the addTopicToSubscription method on the corresponding CollectorService");
-                getMyCollectorService().addTopicToSubscription(currentToken);
-                LOG.trace(".specifySubscriptionTopics(): Topic added... continue");
+                getLogger().trace(".specifySubscriptionTopics(): Call the addTopicToSubscription method on the corresponding CollectorService");
+                subscribedTopics.add(currentToken);
+                getLogger().trace(".specifySubscriptionTopics(): Topic added... continue");
             }
         }
-        LOG.trace(".specifySubscriptionTopics(): Now iterate through each Interface Instance");
-        for(BehaviourCentricInclusiveFilterRulesInterface positiveFilterRulesInterface: positiveFilterSet()){
-            LOG.trace(".specifySubscriptionTopics(): Get the BehaviourStimulusRequirementSet for each interface instance");
-            List<ExplicitStimulus2TwinInstanceMap> explicitStimulus2TwinInstanceMaps = positiveFilterRulesInterface.positiveStaticFilterTwinInstance2StimulusMap();
-            LOG.trace(".specifySubscriptionTopics(): Iterate through each requirements set");
-            for(ExplicitStimulus2TwinInstanceMap stimulusRequirements: explicitStimulus2TwinInstanceMaps){
-                LOG.trace(".specifySubscriptionTopics(): Now, iterate through every actual topic identified within the requirements set");
-                for(StimulusType currentStimulusType: stimulusRequirements.getStimulusRequirementMap().keySet() ){
-                    TopicToken currentToken = currentStimulusType.getAsTopicToken();
-                    LOG.trace(".specifySubscriptionTopics(): Topic of interest --> {}", currentToken);
-                    LOG.trace(".specifySubscriptionTopics(): Now, append the right discriminator so as to get the Topics ONLY from the PubSub service");
-                    currentToken.addDescriminator("Source", "Ladon.StateSpace.PubSub");
-                    LOG.trace(".specifySubscriptionTopics(): Call the addTopicToSubscription method on the corresponding CollectorService");
-                    getMyCollectorService().addTopicToSubscription(currentToken);
-                    LOG.trace(".specifySubscriptionTopics(): Topic added... continue");
-                }
-            }
+        getMyTwinOrchestrationService().requestSubscrption(subscribedTopics);
+        //
+        // Next: lets inject the BehaviourStimulusSubscription into the appropriate DigitalTwinOrchestrator instance
+        //
+        for(BehaviourCentricInclusionFilterRulesInterface criteriaInterface: inclusionFilterSet()){
+            getLogger().trace(".specifySubscriptionTopics(): Get the BehaviourStimulusRequirementSet for each interface instance");
+            BehaviourIdentifier behaviourId = new BehaviourIdentifier(specifyBehaviourName(), specifyBehaviourVersion());
+            getMyTwinOrchestrationService().registerBehaviourCentricInclusiveFilterRules(behaviourId, criteriaInterface);
         }
         //
-        // Now, lets inject the BehaviourStimulusSubscription into the appropriate DigitalTwinOrchestrator instance
-        //
-        for(BehaviourCentricInclusiveFilterRulesInterface criteriaInterface: positiveFilterSet()){
-            LOG.trace(".specifySubscriptionTopics(): Get the BehaviourStimulusRequirementSet for each interface instance");
-            getMyTwinOrchestrationService().registerBehaviourStimulusSubscription(criteriaInterface);
-        }
-        //
-        // Lastly, return an empty set.
+        // Lastly: return an empty set.
         //
         HashSet<TopicToken> myTopics = new HashSet<TopicToken>();
-        LOG.debug(".specifySubscriptionTopics(): Exit");
+        getLogger().debug(".specifySubscriptionTopics(): Exit");
         return(myTopics);
     }
 
-    @Override
-    protected String specifyWUPInstanceName() {
-        return (specifyBehaviourName());
-    }
-
-    @Override
-    protected String specifyWUPVersion() {
-        return (specifyBehaviourVersion());
-    }
-
-    @Override
-    protected String specifyWUPWorkshop() {
-        return(BEHAVIOUR_WORKSHOP);
-    }
 
 }

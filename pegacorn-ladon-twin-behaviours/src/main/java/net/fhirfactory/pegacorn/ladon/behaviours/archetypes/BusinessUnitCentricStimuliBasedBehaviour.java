@@ -22,28 +22,32 @@
 package net.fhirfactory.pegacorn.ladon.behaviours.archetypes;
 
 import net.fhirfactory.pegacorn.ladon.behaviours.archetypes.common.GenericStimuliBasedBehaviour;
-import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.stimulicollector.BusinessUnitTwinStimuliCollector;
-import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.stimulicollector.common.TwinStimuliCollectorBase;
-import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.twinorchestrator.BusinessUnitTwinOrchestrator;
-import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.twinorchestrator.common.TwinOrchestratorBase;
+import net.fhirfactory.pegacorn.ladon.model.twin.TwinTypeEnum;
+import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.stimulusbased.encapsulatorroutes.BusinessUnitTwinTypeWUPBehaviourEncapsulator;
+import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.stimulusbased.encapsulatorroutes.common.TwinTypeBaseBehaviourEncapsulatorRouteWUP;
+import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.orchestrator.BusinessUnitTwinOrchestrator;
+import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.orchestrator.common.TwinOrchestratorBase;
 
 import javax.inject.Inject;
 
 abstract public class BusinessUnitCentricStimuliBasedBehaviour extends GenericStimuliBasedBehaviour {
 
     @Inject
-    private BusinessUnitTwinStimuliCollector stimuliCollectorService;
+    private BusinessUnitTwinTypeWUPBehaviourEncapsulator enapsulatingWUP;
 
     @Inject
     private BusinessUnitTwinOrchestrator orchestratorService;
 
     @Override
-    protected TwinStimuliCollectorBase getMyCollectorService() {
-        return stimuliCollectorService;
+    protected TwinTypeBaseBehaviourEncapsulatorRouteWUP getEncapsulatingWUP() {
+        return enapsulatingWUP;
     }
 
     @Override
     protected TwinOrchestratorBase getMyTwinOrchestrationService() {
         return (orchestratorService);
     }
+
+    @Override
+    protected TwinTypeEnum specifyTwinType(){return(TwinTypeEnum.BUSINESS_UNIT_TWIN);}
 }

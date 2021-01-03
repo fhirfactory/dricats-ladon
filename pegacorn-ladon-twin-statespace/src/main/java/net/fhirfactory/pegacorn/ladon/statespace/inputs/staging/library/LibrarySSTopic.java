@@ -21,16 +21,15 @@
  */
 package net.fhirfactory.pegacorn.ladon.statespace.inputs.staging.library;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.enterprise.context.ApplicationScoped;
-
+import net.fhirfactory.pegacorn.ladon.statespace.inputs.staging.devicemetric.DeviceMetricSSTopicProcessorBean;
+import net.fhirfactory.pegacorn.petasos.model.topics.TopicToken;
+import net.fhirfactory.pegacorn.petasos.wup.archetypes.MOAStandardWUP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fhirfactory.pegacorn.petasos.model.topics.TopicToken;
-import net.fhirfactory.pegacorn.petasos.wup.archetypes.MOAStandardWUP;
+import javax.enterprise.context.ApplicationScoped;
+import java.util.HashSet;
+import java.util.Set;
 
 @ApplicationScoped
 public class LibrarySSTopic extends MOAStandardWUP {
@@ -39,7 +38,7 @@ public class LibrarySSTopic extends MOAStandardWUP {
     protected Logger getLogger(){return(LOG);}
 
     private static String STATE_SPACE_TOPIC_WUP_VERSION = "1.0.0";
-    private static String STATE_SPACE_TOPIC_RESOURCE_ID = "LibraryMetric";
+    private static String STATE_SPACE_TOPIC_RESOURCE_ID = "Library";
     private static String STATE_SPACE_FHIR_VERSION = "4.0.1";
 
 
@@ -71,7 +70,7 @@ public class LibrarySSTopic extends MOAStandardWUP {
     public void configure() throws Exception {
         // This is truly a do-nothing WUP for the initial release and is really only here to
         // separate the topics into their own queue.
-        fromWithStandardExceptionHandling(ingresFeed())
+        from(ingresFeed())
                 .routeId(this.getNameSet().getWupTypeName())
                 .bean(LibrarySSTopicProcessorBean.class,"toPubSub(*)")
                 .to(egressFeed());

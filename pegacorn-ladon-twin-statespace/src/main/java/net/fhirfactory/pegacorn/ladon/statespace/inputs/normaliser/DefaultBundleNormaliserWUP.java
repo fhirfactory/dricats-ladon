@@ -71,7 +71,7 @@ public class DefaultBundleNormaliserWUP extends MOAStandardWUP {
     public void configure() throws Exception {
         // This is truly a do-nothing WUP for the initial release and is really only here to
         // highlight/exemplify the framework for the StateSpace component architecture.
-        fromWithStandardExceptionHandling(ingresFeed())
+        from(ingresFeed())
                 .routeId(getNameSet().getRouteCoreWUP())
                 .bean(DummyNormaliserBean.class,"normaliseBundle(*)")
                 .to(egressFeed());

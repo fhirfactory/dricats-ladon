@@ -68,7 +68,7 @@ public class BiologicallyDerivedProductSSTopic extends MOAStandardWUP {
     public void configure() throws Exception {
         // This is truly a do-nothing WUP for the initial release and is really only here to
         // separate the topics into their own queue.
-        fromWithStandardExceptionHandling(ingresFeed())
+        from(ingresFeed())
                 .routeId(this.getNameSet().getWupTypeName())
                 .bean(BiologicallyDerivedProductSSTopicProcessorBean.class,"toPubSub(*)")
                 .to(egressFeed());

@@ -22,22 +22,23 @@
 package net.fhirfactory.pegacorn.ladon.behaviours.archetypes;
 
 import net.fhirfactory.pegacorn.ladon.behaviours.archetypes.common.GenericStimuliBasedBehaviour;
-import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.stimulicollector.PractitionerRoleTwinStimuliCollector;
-import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.stimulicollector.common.TwinStimuliCollectorBase;
-import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.twinorchestrator.PractitionerRoleTwinOrchestrator;
-import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.twinorchestrator.common.TwinOrchestratorBase;
+import net.fhirfactory.pegacorn.ladon.model.twin.TwinTypeEnum;
+import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.stimulusbased.encapsulatorroutes.PractitionerRoleTwinTypeWUPBehaviourEncapsulator;
+import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.stimulusbased.encapsulatorroutes.common.TwinTypeBaseBehaviourEncapsulatorRouteWUP;
+import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.orchestrator.PractitionerRoleTwinOrchestrator;
+import net.fhirfactory.pegacorn.ladon.statespace.twinpathway.orchestrator.common.TwinOrchestratorBase;
 
 import javax.inject.Inject;
 
 abstract public class PractitionerRoleCentricStimuliBasedBehaviour extends GenericStimuliBasedBehaviour {
     @Inject
-    PractitionerRoleTwinStimuliCollector stimuliCollectorService;
+    PractitionerRoleTwinTypeWUPBehaviourEncapsulator stimuliCollectorService;
 
     @Inject
     PractitionerRoleTwinOrchestrator orchestratorService;
 
     @Override
-    protected TwinStimuliCollectorBase getMyCollectorService() {
+    protected TwinTypeBaseBehaviourEncapsulatorRouteWUP getEncapsulatingWUP() {
         return stimuliCollectorService;
     }
 
@@ -45,4 +46,7 @@ abstract public class PractitionerRoleCentricStimuliBasedBehaviour extends Gener
     protected TwinOrchestratorBase getMyTwinOrchestrationService() {
         return (orchestratorService);
     }
+
+    @Override
+    protected TwinTypeEnum specifyTwinType(){return(TwinTypeEnum.PRACTITIONER_ROLE_TWIN);}
 }

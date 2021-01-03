@@ -21,17 +21,15 @@
  */
 package net.fhirfactory.pegacorn.ladon.statespace.inputs.staging.practitioner;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.enterprise.context.ApplicationScoped;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.fhirfactory.pegacorn.ladon.statespace.inputs.staging.practitionerrole.PractitionerRoleSSTopicProcessorBean;
 import net.fhirfactory.pegacorn.petasos.model.topics.TopicToken;
 import net.fhirfactory.pegacorn.petasos.wup.archetypes.MOAStandardWUP;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.enterprise.context.ApplicationScoped;
+import java.util.HashSet;
+import java.util.Set;
 
 @ApplicationScoped
 public class PractitionerSSTopic extends MOAStandardWUP {
@@ -71,7 +69,7 @@ public class PractitionerSSTopic extends MOAStandardWUP {
     public void configure() throws Exception {
         // This is truly a do-nothing WUP for the initial release and is really only here to
         // separate the topics into their own queue.
-        fromWithStandardExceptionHandling(ingresFeed())
+        from(ingresFeed())
                 .routeId(this.getNameSet().getWupTypeName())
                 .bean(PractitionerRoleSSTopicProcessorBean.class,"toPubSub(*)")
                 .to(egressFeed());
