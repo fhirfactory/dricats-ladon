@@ -21,6 +21,22 @@
  */
 package net.fhirfactory.pegacorn.ladon.mdr.fhirplace.conduits;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import org.hl7.fhir.r4.model.HealthcareService;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Property;
+import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import net.fhirfactory.pegacorn.ladon.mdr.conduit.controller.HealthcareServiceSoTConduitController;
 import net.fhirfactory.pegacorn.ladon.mdr.fhirplace.accessor.FHIRPlaceBaseEntitiesMDRAccessor;
@@ -32,15 +48,6 @@ import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitSear
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.SoTConduitGradeEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.searches.SearchNameEnum;
 import net.fhirfactory.pegacorn.platform.restfulapi.PegacornInternalFHIRClientServices;
-import org.hl7.fhir.r4.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 @ApplicationScoped
 public class HealthcareServiceSoTResourceConduit extends FHIRPlaceSoTConduitCommon {
@@ -204,6 +211,12 @@ public class HealthcareServiceSoTResourceConduit extends FHIRPlaceSoTConduitComm
     @Override
     public boolean supportsDirectDeleteAction(Resource wholeResource) {
         return false;
+    }
+    
+    
+    @Override
+    protected ResourceType specifyResourceType() {
+        return (ResourceType.HealthcareService);
     }
 
     //
