@@ -1,5 +1,13 @@
 package net.fhirfactory.pegacorn.ladon.mdr.conduit.core;
 
+import javax.inject.Inject;
+
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
+
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponse;
@@ -9,18 +17,17 @@ import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBAction
 import net.fhirfactory.pegacorn.petasos.model.itops.PegacornFunctionStatusEnum;
 import net.fhirfactory.pegacorn.platform.restfulapi.PegacornInternalFHIRClientServices;
 import net.fhirfactory.pegacorn.util.FHIRContextUtility;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.IdType;
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Resource;
-
-import javax.inject.Inject;
 
 public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit {
     @Inject
     FHIRContextUtility fhirContextUtility;
     @Inject
     private ResourceSoTConduitActionResponseFactory sotConduitOutcomeFactory;
+    
+    abstract protected ResourceType specifyResourceType();
+    
+    @Override
+    public ResourceType getResourceType(){return(specifyResourceType());}
 
     @Override
     protected void doSubclassInitialisations(){
@@ -44,6 +51,14 @@ public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit 
 
     @Override
     public ResourceSoTConduitActionResponse getResourceViaIdentifier(Identifier identifier) {
+        getLogger().info(".getResourceViaIdentifier(): Entry, identifier --> {}", identifier);
+        
+        getLogger().info("..getResourceViaIdentifier(): resourceType --> {}", getResourceType());
+        
+        ResourceSoTConduitActionResponse outcome = standardGetResourceViaIdentifier(getResourceType().toString(), identifier);
+        
+        getLogger().info(".getResourceViaIdentifier(): Exit, Outcome --> {}", outcome);
+        
         return (standardGetResourceViaIdentifier(getResourceType().toString(), identifier));
     }
 
@@ -63,7 +78,7 @@ public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit 
             getLogger().debug(".standardGetResourceViaIdentifier(): Entry, identifier.value --> {}", identifier.getValue());
         }
         String activityLocation = resourceName + "::SoTResourceConduit::standardGetResourceViaIdentifier()";
-        Resource retrievedResource = (Resource)getFHIRServiceAccessor().findResourceByIdentifier(resourceName, identifier);
+        Resource retrievedResource = getFHIRServiceAccessor().findResourceByIdentifier(resourceName, identifier);
         if (retrievedResource == null){
             // There was no response to the query or it was in error....
             getLogger().trace(".standardGetResourceViaIdentifier(): There was no response to the query or it was in error....");

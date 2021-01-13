@@ -21,6 +21,25 @@
  */
 package net.fhirfactory.pegacorn.ladon.mdr.fhirplace.conduits;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.DocumentReference;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Property;
+import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.DateRangeParam;
 import ca.uhn.fhir.rest.param.TokenParam;
@@ -35,17 +54,6 @@ import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.SoTConduitGradeEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.searches.SearchNameEnum;
 import net.fhirfactory.pegacorn.platform.restfulapi.PegacornInternalFHIRClientServices;
-import org.hl7.fhir.r4.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @ApplicationScoped
 public class DocumentReferenceSoTResourceConduit extends FHIRPlaceSoTConduitCommon {
@@ -304,5 +312,11 @@ public class DocumentReferenceSoTResourceConduit extends FHIRPlaceSoTConduitComm
         searchResponse.setResponseResourceGrade(ResourceGradeEnum.THOROUGH);
         searchResponse.setSoTConduitGrade(SoTConduitGradeEnum.AUTHORITATIVE);
         return(searchResponse);
+    }
+    
+    
+    @Override
+    protected ResourceType specifyResourceType() {
+        return (ResourceType.DocumentReference);
     }
 }
