@@ -5,14 +5,14 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import net.fhirfactory.pegacorn.petasos.datasets.manager.TopicIM;
+import net.fhirfactory.pegacorn.petasos.datasets.manager.DataParcelSubscriptionIM;
 import net.fhirfactory.pegacorn.petasos.model.topics.TopicToken;
 import net.fhirfactory.pegacorn.petasos.wup.archetypes.MOAStandardWUP;
 
 public abstract class TwinStimuliCollectorBase extends MOAStandardWUP {
 
     @Inject
-    TopicIM topicServer;
+    DataParcelSubscriptionIM topicServer;
 
     @Override
     protected Set<TopicToken> specifySubscriptionTopics() {

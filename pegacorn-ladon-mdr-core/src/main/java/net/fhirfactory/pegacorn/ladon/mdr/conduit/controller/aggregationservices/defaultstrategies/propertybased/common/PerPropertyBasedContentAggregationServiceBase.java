@@ -27,15 +27,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.bundle.BundleContentHelper;
+import net.fhirfactory.pegacorn.internals.fhir.r4.resources.bundle.BundleContentHelper;
 import net.fhirfactory.pegacorn.ladon.mdr.conduit.controller.aggregationservices.defaultstrategies.common.DefaultResourceContentAggregationServiceBase;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceGradeEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponse;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitSearchResponseElement;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionTypeEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcomeFactory;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionStatusEnum;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionTypeEnum;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcomeFactory;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
@@ -47,7 +47,7 @@ public abstract class PerPropertyBasedContentAggregationServiceBase extends Defa
     private PerPropertyMergeHelpers mergeHelpers;
 
     @Inject
-    private VirtualDBMethodOutcomeFactory outcomeFactory;
+    private TransactionMethodOutcomeFactory outcomeFactory;
 
     @Inject
     private BundleContentHelper bundleHelper;
@@ -68,42 +68,42 @@ public abstract class PerPropertyBasedContentAggregationServiceBase extends Defa
     //
 
     @Override
-    public VirtualDBMethodOutcome aggregateCreateResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
-        VirtualDBMethodOutcome outcome = defaultActionOutcomeAggregationService(VirtualDBActionTypeEnum.CREATE, responseSet);
+    public TransactionMethodOutcome aggregateCreateResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
+        TransactionMethodOutcome outcome = defaultActionOutcomeAggregationService(TransactionTypeEnum.CREATE, responseSet);
         return(outcome);
     }
 
     @Override
-    public VirtualDBMethodOutcome aggregateGetResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
-        VirtualDBMethodOutcome outcome = defaultActionOutcomeAggregationService(VirtualDBActionTypeEnum.REVIEW, responseSet);
+    public TransactionMethodOutcome aggregateGetResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
+        TransactionMethodOutcome outcome = defaultActionOutcomeAggregationService(TransactionTypeEnum.REVIEW, responseSet);
         return(outcome);
     }
 
     @Override
-    public VirtualDBMethodOutcome aggregateUpdateResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
-        VirtualDBMethodOutcome outcome = defaultActionOutcomeAggregationService(VirtualDBActionTypeEnum.UPDATE, responseSet);
+    public TransactionMethodOutcome aggregateUpdateResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
+        TransactionMethodOutcome outcome = defaultActionOutcomeAggregationService(TransactionTypeEnum.UPDATE, responseSet);
         return(outcome);
     }
 
     @Override
-    public VirtualDBMethodOutcome aggregateDeleteResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
-        VirtualDBMethodOutcome outcome = defaultActionOutcomeAggregationService(VirtualDBActionTypeEnum.DELETE, responseSet);
+    public TransactionMethodOutcome aggregateDeleteResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
+        TransactionMethodOutcome outcome = defaultActionOutcomeAggregationService(TransactionTypeEnum.DELETE, responseSet);
         return(outcome);
     }
 
     @Override
-    public VirtualDBMethodOutcome aggregateSearchResultSet(List<ResourceSoTConduitSearchResponseElement> responseSet) {
+    public TransactionMethodOutcome aggregateSearchResultSet(List<ResourceSoTConduitSearchResponseElement> responseSet) {
         getLogger().debug(".aggregateSearchResultSet(): Entry");
         if(responseSet.size() != 1){
-            VirtualDBMethodOutcome outcome = outcomeFactory.generateEmptySearchResponse(getResourceType());
+            TransactionMethodOutcome outcome = outcomeFactory.generateEmptySearchResponse(getResourceType());
             getLogger().debug(".aggregateSearchResultSet(): Exit, has more or less than a single entry");
             return(outcome);
         }
         Bundle outcomeBundle = bundleHelper.buildSearchResponseBundle(responseSet.get(0).getResources().get(0)) ;
-        VirtualDBMethodOutcome outcome = new VirtualDBMethodOutcome();
+        TransactionMethodOutcome outcome = new TransactionMethodOutcome();
         outcome.setCreated(false);
-        outcome.setCausalAction(VirtualDBActionTypeEnum.SEARCH);
-        outcome.setStatusEnum(VirtualDBActionStatusEnum.SEARCH_FINISHED);
+        outcome.setCausalAction(TransactionTypeEnum.SEARCH);
+        outcome.setStatusEnum(TransactionStatusEnum.SEARCH_FINISHED);
         CodeableConcept details = new CodeableConcept();
         Coding detailsCoding = new Coding();
         detailsCoding.setSystem("https://www.hl7.org/fhir/codesystem-operation-outcome.html");
@@ -131,19 +131,19 @@ public abstract class PerPropertyBasedContentAggregationServiceBase extends Defa
     //
     //
 
-    protected VirtualDBMethodOutcome defaultActionOutcomeAggregationService(VirtualDBActionTypeEnum action, List<ResourceSoTConduitActionResponse> outcomeList){
+    protected TransactionMethodOutcome defaultActionOutcomeAggregationService(TransactionTypeEnum action, List<ResourceSoTConduitActionResponse> outcomeList){
         getLogger().debug(".defaultActionOutcomeAggregationService(): Entry, action --> {}", action);
         if(outcomeList == null){
-            VirtualDBMethodOutcome aggregatedOutcome = generateBadAttributeOutcome("defaultCreateActionOutcomeAggregation()", action, "Empty Outcome List!!!");
+            TransactionMethodOutcome aggregatedOutcome = generateBadAttributeOutcome("defaultCreateActionOutcomeAggregation()", action, "Empty Outcome List!!!");
             getLogger().debug(".defaultActionOutcomeAggregationService(): Exit, outcomeList is null");
             return(aggregatedOutcome);
         }
         if(outcomeList.isEmpty()){
             getLogger().debug(".defaultActionOutcomeAggregationService(): Exit, outcomeList is empty");
-            VirtualDBMethodOutcome aggregatedOutcome = generateBadAttributeOutcome("defaultCreateActionOutcomeAggregation()", action, "Empty Outcome List!!!");
+            TransactionMethodOutcome aggregatedOutcome = generateBadAttributeOutcome("defaultCreateActionOutcomeAggregation()", action, "Empty Outcome List!!!");
         }
         boolean hasFailure = false;
-        VirtualDBMethodOutcome failedOutcome = null;
+        TransactionMethodOutcome failedOutcome = null;
         for(ResourceSoTConduitActionResponse currentOutcome: outcomeList) {
             if(!successfulCompletion(currentOutcome.getStatusEnum())){
                 return(currentOutcome);

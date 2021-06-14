@@ -140,7 +140,7 @@
             <logger category="net.fhirfactory.pegacorn.deployment.topology.initialiser">
                 <level name="TRACE"/>
             </logger>
-            <logger category="net.fhirfactory.pegacorn.deployment.topology.map.samples.standalone.ladon">
+            <logger category="net.fhirfactory.pegacorn.deployment.topology.factories.samples.standalone.ladon">
                 <level name="DEBUG"/>
             </logger>
             <logger category="com.arjuna">

@@ -24,8 +24,8 @@ package net.fhirfactory.pegacorn.ladon.mdr.conduit.controller.aggregationservice
 import net.fhirfactory.pegacorn.ladon.mdr.conduit.controller.aggregationservices.defaultstrategies.wholeresourcebased.common.WholeResourceBasedAggregationServiceBase;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponse;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitSearchResponseElement;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionTypeEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionTypeEnum;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Resource;
@@ -86,32 +86,32 @@ public class OrganizationDefaultResourceBasedContentAggregationService extends W
     }
 
     @Override
-    public VirtualDBMethodOutcome aggregateCreateResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
-        VirtualDBMethodOutcome virtualDBMethodOutcome = defaultActionOutcomeAggregationService(VirtualDBActionTypeEnum.CREATE, responseSet);
+    public TransactionMethodOutcome aggregateCreateResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
+        TransactionMethodOutcome virtualDBMethodOutcome = defaultActionOutcomeAggregationService(TransactionTypeEnum.CREATE, responseSet);
         return(virtualDBMethodOutcome);
     }
 
     @Override
-    public VirtualDBMethodOutcome aggregateGetResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
-        VirtualDBMethodOutcome virtualDBMethodOutcome = defaultActionOutcomeAggregationService(VirtualDBActionTypeEnum.REVIEW, responseSet);
+    public TransactionMethodOutcome aggregateGetResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
+        TransactionMethodOutcome virtualDBMethodOutcome = defaultActionOutcomeAggregationService(TransactionTypeEnum.REVIEW, responseSet);
         return(virtualDBMethodOutcome);
     }
 
     @Override
-    public VirtualDBMethodOutcome aggregateUpdateResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
-        VirtualDBMethodOutcome virtualDBMethodOutcome = defaultActionOutcomeAggregationService(VirtualDBActionTypeEnum.UPDATE, responseSet);
+    public TransactionMethodOutcome aggregateUpdateResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
+        TransactionMethodOutcome virtualDBMethodOutcome = defaultActionOutcomeAggregationService(TransactionTypeEnum.UPDATE, responseSet);
         return(virtualDBMethodOutcome);
     }
 
     @Override
-    public VirtualDBMethodOutcome aggregateDeleteResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
-        VirtualDBMethodOutcome virtualDBMethodOutcome = defaultActionOutcomeAggregationService(VirtualDBActionTypeEnum.DELETE, responseSet);
+    public TransactionMethodOutcome aggregateDeleteResponseSet(List<ResourceSoTConduitActionResponse> responseSet) {
+        TransactionMethodOutcome virtualDBMethodOutcome = defaultActionOutcomeAggregationService(TransactionTypeEnum.DELETE, responseSet);
         return(virtualDBMethodOutcome);
     }
 
     @Override
-    public VirtualDBMethodOutcome aggregateSearchResultSet(List<ResourceSoTConduitSearchResponseElement> responseSet) {
-        VirtualDBMethodOutcome virtualDBMethodOutcome = defaultSearchOutcomeAggregationService(responseSet);
+    public TransactionMethodOutcome aggregateSearchResultSet(List<ResourceSoTConduitSearchResponseElement> responseSet) {
+        TransactionMethodOutcome virtualDBMethodOutcome = defaultSearchOutcomeAggregationService(responseSet);
         return(virtualDBMethodOutcome);
     }
 }

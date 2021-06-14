@@ -1,6 +1,6 @@
 package net.fhirfactory.pegacorn.ladon.model.virtualdb;
 
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.searches.SearchNameEnum;
 import org.hl7.fhir.r4.model.*;
 
@@ -11,24 +11,24 @@ public interface ResourceDBEngineInterface {
     //
     // Create
     //
-    public VirtualDBMethodOutcome createResource(Resource resourceToCreate);
+    public TransactionMethodOutcome createResource(Resource resourceToCreate);
 
     //
     // Review / Get
     //
-    public VirtualDBMethodOutcome getResource(IdType id);
+    public TransactionMethodOutcome getResource(IdType id);
     //
     // Update
     //
-    public VirtualDBMethodOutcome updateResource(Resource resourceToUpdate);
+    public TransactionMethodOutcome updateResource(Resource resourceToUpdate);
     //
     // Delete
     //
-    public VirtualDBMethodOutcome deleteResource(Resource resourceToDelete);
+    public TransactionMethodOutcome deleteResource(Resource resourceToDelete);
 
     //
     // resourceSearches (base set, keep limited or else)
     //
-    public VirtualDBMethodOutcome getResourcesViaSearchCriteria(ResourceType resourceType, SearchNameEnum searchName, Map<Property, Serializable> parameterSet);
-    public VirtualDBMethodOutcome findResourceViaIdentifier(Identifier identifier);
+    public TransactionMethodOutcome getResourcesViaSearchCriteria(ResourceType resourceType, SearchNameEnum searchName, Map<Property, Serializable> parameterSet);
+    public TransactionMethodOutcome findResourceViaIdentifier(Identifier identifier);
 }

@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr;
 
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionStatusEnum;
 import org.hl7.fhir.r4.model.Resource;
 
 import java.util.ArrayList;
@@ -31,14 +31,14 @@ public class ResourceSoTConduitSearchResponseElement {
     List<Resource> resourceList;
     ResourceGradeEnum responseResourceGrade;
     SoTConduitGradeEnum soTConduitGrade;
-    VirtualDBActionStatusEnum statusEnum;
+    TransactionStatusEnum statusEnum;
     String conduitName;
     String errorMessage;
 
     public ResourceSoTConduitSearchResponseElement(){
         resourceList = new ArrayList<>();
         responseResourceGrade = ResourceGradeEnum.EMPTY;
-        statusEnum = VirtualDBActionStatusEnum.INDETERMINANT;
+        statusEnum = TransactionStatusEnum.INDETERMINANT;
         conduitName = null;
         errorMessage = null;
     }
@@ -81,11 +81,11 @@ public class ResourceSoTConduitSearchResponseElement {
         this.soTConduitGrade = soTConduitGrade;
     }
 
-    public VirtualDBActionStatusEnum getStatusEnum() {
+    public TransactionStatusEnum getStatusEnum() {
         return statusEnum;
     }
 
-    public void setStatusEnum(VirtualDBActionStatusEnum statusEnum) {
+    public void setStatusEnum(TransactionStatusEnum statusEnum) {
         this.statusEnum = statusEnum;
     }
 

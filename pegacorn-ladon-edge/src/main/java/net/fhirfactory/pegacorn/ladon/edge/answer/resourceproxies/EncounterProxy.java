@@ -25,11 +25,11 @@ import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import net.fhirfactory.pegacorn.datasets.fhir.r4.operationaloutcome.OperationOutcomeGenerator;
-import net.fhirfactory.pegacorn.ladon.edge.answer.resourceproxies.common.LadonEdgeSynchronousCRUDResourceBase;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
+import net.fhirfactory.pegacorn.internals.fhir.r4.operationaloutcome.OperationOutcomeGenerator;
 import net.fhirfactory.pegacorn.ladon.virtualdb.accessors.EncounterAccessor;
-import net.fhirfactory.pegacorn.ladon.virtualdb.accessors.common.AccessorBase;
+import net.fhirfactory.pegacorn.platform.edge.answer.resourceproxies.common.EdgeSynchronousCRUDResourceBase;
+import net.fhirfactory.pegacorn.platform.edge.model.common.ResourceAccessorInterfaceBase;
 import org.hl7.fhir.r4.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ import javax.inject.Inject;
 import javax.naming.OperationNotSupportedException;
 
 @ApplicationScoped
-public class EncounterProxy extends LadonEdgeSynchronousCRUDResourceBase implements IResourceProvider {
+public class EncounterProxy extends EdgeSynchronousCRUDResourceBase implements IResourceProvider {
     private static final Logger LOG = LoggerFactory.getLogger(EncounterProxy.class);
 
     public EncounterProxy() {
@@ -59,7 +59,7 @@ public class EncounterProxy extends LadonEdgeSynchronousCRUDResourceBase impleme
     private OperationOutcomeGenerator outcomeGenerator;
 
     @Override
-    protected AccessorBase specifyVirtualDBAccessor() {
+    protected ResourceAccessorInterfaceBase specifyActualResourceAccessor() {
         return (virtualDBAccessor);
     }
 
@@ -75,7 +75,7 @@ public class EncounterProxy extends LadonEdgeSynchronousCRUDResourceBase impleme
     @Create()
     public MethodOutcome createEncounter(@ResourceParam Encounter theResource) {
         LOG.debug(".createEncounter(): Entry, theResource (Encounter) --> {}", theResource);
-        VirtualDBMethodOutcome outcome = getVirtualDBAccessor().createResource(theResource);
+        TransactionMethodOutcome outcome = getActualResourceAccessor().createResource(theResource);
         return (outcome);
     }
 
@@ -94,7 +94,7 @@ public class EncounterProxy extends LadonEdgeSynchronousCRUDResourceBase impleme
     @Read()
     public Encounter reviewEncounter(@IdParam IdType resourceId) {
         LOG.debug(".reviewEncounter(): Entry, resourceId (IdType) --> {}", resourceId);
-        VirtualDBMethodOutcome outcome = getResource(resourceId);
+        TransactionMethodOutcome outcome = getResource(resourceId);
         Encounter retrievedDocRef = (Encounter) outcome.getResource();
         LOG.debug(".reviewEncounter(): Exit, retrieved Document Reference (Encounter) --> {}", retrievedDocRef);
         return (retrievedDocRef);
@@ -113,7 +113,7 @@ public class EncounterProxy extends LadonEdgeSynchronousCRUDResourceBase impleme
     @Update()
     public MethodOutcome updateEncounter(@ResourceParam Encounter resourceToUpdate) {
         LOG.debug(".readEncounter(): Entry, docRefToUpdate (Encounter) --> {}", resourceToUpdate);
-        VirtualDBMethodOutcome outcome = updateResource(resourceToUpdate);
+        TransactionMethodOutcome outcome = updateResource(resourceToUpdate);
         LOG.debug(".readEncounter(): Exit, outcome (VirtualDBMethodOutcome) --> {}", outcome);
         return (outcome);
     }

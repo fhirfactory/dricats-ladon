@@ -11,7 +11,7 @@
   <logger name="net.fhirfactory.pegacorn.ladon" level="TRACE"/>
   <logger name="net.fhirfactory.pegacorn.common" level="INFO"/>
   <logger name="net.fhirfactory.pegacorn.fhir.r4.samples" level="TRACE"/>
-  <logger name="net.fhirfactory.pegacorn.deployment.topology.map.samples" level="TRACE"/>
+  <logger name="net.fhirfactory.pegacorn.deployment.topology.factories.samples" level="TRACE"/>
 
   <root level="TRACE">
     <appender-ref ref="STDOUT" />

@@ -21,35 +21,31 @@
  */
 package net.fhirfactory.pegacorn.ladon.mdr.fhirplace.conduits.common;
 
-import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import net.fhirfactory.pegacorn.datasets.fhir.r4.internal.systems.DeploymentInstanceDetailInterface;
-import net.fhirfactory.pegacorn.deployment.names.PegacornFHIRPlaceMDRComponentNames;
+import net.fhirfactory.pegacorn.deployment.names.subsystems.FHIRPlaceIMComponentNames;
+import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.fhirplace.dm.FHIRPlaceMDRDMPropertyFile;
+import net.fhirfactory.pegacorn.internals.fhir.r4.internal.systems.DeploymentInstanceDetailInterface;
 import net.fhirfactory.pegacorn.ladon.mdr.conduit.core.SoTResourceConduitFunctionBase;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponse;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponseFactory;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.SoTResourceConduit;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionTypeEnum;
-import net.fhirfactory.pegacorn.petasos.model.itops.PegacornFunctionStatusEnum;
-import net.fhirfactory.pegacorn.platform.restfulapi.PegacornInternalFHIRClientServices;
-import net.fhirfactory.pegacorn.util.FHIRContextUtility;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.*;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionTypeEnum;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Resource;
 
 import javax.inject.Inject;
 
 public abstract class FHIRPlaceSoTConduitCommon extends SoTResourceConduitFunctionBase {
 
     @Inject
-    private PegacornFHIRPlaceMDRComponentNames pegacornFHIRPlaceMDRComponentNames;
+    private FHIRPlaceIMComponentNames fhirPlaceMDRComponentNames;
 
     @Inject
     private DeploymentInstanceDetailInterface deploymentInstanceDetailInterface;
 
-    public PegacornFHIRPlaceMDRComponentNames getPegacornFHIRPlaceMDRComponentNames() {
-        return pegacornFHIRPlaceMDRComponentNames;
+    @Inject
+    private FHIRPlaceMDRDMPropertyFile fhirplaceMDRProperties;
+
+    public FHIRPlaceIMComponentNames getPegacornFHIRPlaceMDRComponentNames() {
+        return fhirPlaceMDRComponentNames;
     }
 
     @Override
@@ -59,12 +55,12 @@ public abstract class FHIRPlaceSoTConduitCommon extends SoTResourceConduitFuncti
 
     @Override
     public String getConduitName(){
-        return(pegacornFHIRPlaceMDRComponentNames.getPegacornFHIRPlaceMDRName());
+        return(fhirplaceMDRProperties.getSubsystemInstant().getSubsystemName());
     }
 
     @Override
     public String getConduitVersion(){
-        return(pegacornFHIRPlaceMDRComponentNames.getPegacornFHIRPlaceMDRVersion());
+        return(fhirplaceMDRProperties.getSubsystemInstant().getSubsystemVersion());
     }
     /**
      *
@@ -85,7 +81,7 @@ public abstract class FHIRPlaceSoTConduitCommon extends SoTResourceConduitFuncti
             getLogger().error(".writeResource(): Can't create Resource {}, error --> {}", callOutcome.getOperationOutcome());
         }
         Identifier bestIdentifier = getBestIdentifier(callOutcome);
-        ResourceSoTConduitActionResponse outcome = new ResourceSoTConduitActionResponse( getSourceOfTruthOwningOrganization(), getSourceOfTruthEndpoint(), VirtualDBActionTypeEnum.CREATE, bestIdentifier, callOutcome);
+        ResourceSoTConduitActionResponse outcome = new ResourceSoTConduitActionResponse( getSourceOfTruthOwningOrganization(), getSourceOfTruthEndpoint(), TransactionTypeEnum.CREATE, bestIdentifier, callOutcome);
         getLogger().debug(".standardCreateResource(): Exit, outcome --> {}", outcome);
         return(outcome);
     }
@@ -111,7 +107,7 @@ public abstract class FHIRPlaceSoTConduitCommon extends SoTResourceConduitFuncti
             getLogger().error(".writeResource(): Can't update Resource {}, error --> {}", callOutcome.getOperationOutcome());
         }
         Identifier bestIdentifier = getBestIdentifier(callOutcome);
-        ResourceSoTConduitActionResponse outcome = new ResourceSoTConduitActionResponse(getSourceOfTruthOwningOrganization(), getSourceOfTruthEndpoint(), VirtualDBActionTypeEnum.UPDATE, bestIdentifier, callOutcome);
+        ResourceSoTConduitActionResponse outcome = new ResourceSoTConduitActionResponse(getSourceOfTruthOwningOrganization(), getSourceOfTruthEndpoint(), TransactionTypeEnum.UPDATE, bestIdentifier, callOutcome);
         getLogger().debug(".standardUpdateResource(): Exit, outcome --> {}", outcome);
         return(outcome);
     }

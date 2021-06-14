@@ -33,9 +33,9 @@ import org.hl7.fhir.r4.model.OperationOutcome;
 
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponse;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitSearchResponseElement;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionTypeEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionStatusEnum;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionTypeEnum;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
 
 public abstract class WholeResourceBasedAggregationServiceBase extends DefaultResourceContentAggregationServiceBase {
 
@@ -45,15 +45,15 @@ public abstract class WholeResourceBasedAggregationServiceBase extends DefaultRe
     //
     //
 
-    protected VirtualDBMethodOutcome defaultActionOutcomeAggregationService(VirtualDBActionTypeEnum action, List<ResourceSoTConduitActionResponse> outcomeList){
+    protected TransactionMethodOutcome defaultActionOutcomeAggregationService(TransactionTypeEnum action, List<ResourceSoTConduitActionResponse> outcomeList){
         if(outcomeList == null){
-            VirtualDBMethodOutcome aggregatedOutcome = generateBadAttributeOutcome("defaultCreateActionOutcomeAggregation()", action, "Empty Outcome List!!!");
+            TransactionMethodOutcome aggregatedOutcome = generateBadAttributeOutcome("defaultCreateActionOutcomeAggregation()", action, "Empty Outcome List!!!");
         }
         if(outcomeList.isEmpty()){
-            VirtualDBMethodOutcome aggregatedOutcome = generateBadAttributeOutcome("defaultCreateActionOutcomeAggregation()", action, "Empty Outcome List!!!");
+            TransactionMethodOutcome aggregatedOutcome = generateBadAttributeOutcome("defaultCreateActionOutcomeAggregation()", action, "Empty Outcome List!!!");
         }
         boolean hasFailure = false;
-        VirtualDBMethodOutcome failedOutcome = null;
+        TransactionMethodOutcome failedOutcome = null;
         for(ResourceSoTConduitActionResponse currentOutcome: outcomeList) {
             getLogger().info(".defaultActionOutcomeAggregationService(): currentOutcome.sourceOfTruthEndpoint --> {}", currentOutcome.getSourceOfTruthName());
 //            getLogger().info(".defaultActionOutcomeAggregationService(): currentOutcome.resource --> {}", currentOutcome.getResource().getIdElement());
@@ -79,25 +79,25 @@ public abstract class WholeResourceBasedAggregationServiceBase extends DefaultRe
         return(outcome);
     }
 
-    protected VirtualDBMethodOutcome defaultSearchOutcomeAggregationService(List<ResourceSoTConduitSearchResponseElement> searchOutcomeList){
+    protected TransactionMethodOutcome defaultSearchOutcomeAggregationService(List<ResourceSoTConduitSearchResponseElement> searchOutcomeList){
         if(searchOutcomeList == null){
-            VirtualDBMethodOutcome methodOutcome = generateBadAttributeOutcome("defaultSearchOutcomeAggregationService()", VirtualDBActionTypeEnum.SEARCH, "searchOutcomeList is null");
+            TransactionMethodOutcome methodOutcome = generateBadAttributeOutcome("defaultSearchOutcomeAggregationService()", TransactionTypeEnum.SEARCH, "searchOutcomeList is null");
             return(methodOutcome);
         }
         if(searchOutcomeList.isEmpty() ){
-            VirtualDBMethodOutcome methodOutcome = generateBadAttributeOutcome("defaultSearchOutcomeAggregationService()", VirtualDBActionTypeEnum.SEARCH, "searchOutcomeList is empty, no conduit has provided feedback/responses");
+            TransactionMethodOutcome methodOutcome = generateBadAttributeOutcome("defaultSearchOutcomeAggregationService()", TransactionTypeEnum.SEARCH, "searchOutcomeList is empty, no conduit has provided feedback/responses");
             return(methodOutcome);
         }
         for(ResourceSoTConduitSearchResponseElement responseElement: searchOutcomeList){
-            if(responseElement.getStatusEnum() == VirtualDBActionStatusEnum.SEARCH_FAILURE){
-                VirtualDBMethodOutcome outcome = createFailedSearchOutcome(responseElement.getConduitName(), responseElement.getErrorMessage());
+            if(responseElement.getStatusEnum() == TransactionStatusEnum.SEARCH_FAILURE){
+                TransactionMethodOutcome outcome = createFailedSearchOutcome(responseElement.getConduitName(), responseElement.getErrorMessage());
             }
         }
         Bundle searchResult = assembleSearchResultBundle(searchOutcomeList);
-        VirtualDBMethodOutcome searchOutcome = new VirtualDBMethodOutcome();
+        TransactionMethodOutcome searchOutcome = new TransactionMethodOutcome();
         searchOutcome.setCreated(false);
-        searchOutcome.setCausalAction(VirtualDBActionTypeEnum.SEARCH);
-        searchOutcome.setStatusEnum(VirtualDBActionStatusEnum.SEARCH_FINISHED);
+        searchOutcome.setCausalAction(TransactionTypeEnum.SEARCH);
+        searchOutcome.setStatusEnum(TransactionStatusEnum.SEARCH_FINISHED);
         CodeableConcept details = new CodeableConcept();
         Coding detailsCoding = new Coding();
         detailsCoding.setSystem("https://www.hl7.org/fhir/codesystem-operation-outcome.html");

@@ -21,7 +21,6 @@
  */
 package net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr;
 
-import ca.uhn.fhir.rest.api.MethodOutcome;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.searches.SearchNameEnum;
 import org.hl7.fhir.r4.model.*;
 

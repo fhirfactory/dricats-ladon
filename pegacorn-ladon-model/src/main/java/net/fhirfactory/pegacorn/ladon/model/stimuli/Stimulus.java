@@ -21,15 +21,12 @@
  */
 package net.fhirfactory.pegacorn.ladon.model.stimuli;
 
+import net.fhirfactory.pegacorn.petasos.model.uow.UoWIdentifier;
+import org.hl7.fhir.r4.model.Resource;
+
 import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
-
-import net.fhirfactory.pegacorn.petasos.model.uow.UoWIdentifier;
-import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r4.model.Resource;
-
-import net.fhirfactory.pegacorn.common.model.FDNToken;
 
 public class Stimulus {
     private Resource stimulusResource;

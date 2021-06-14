@@ -22,16 +22,15 @@
 package net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionTypeEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionTypeEnum;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
 import net.fhirfactory.pegacorn.petasos.model.itops.PegacornFunctionStatusEnum;
 import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Property;
 import org.hl7.fhir.r4.model.Reference;
 
 import java.util.HashSet;
 
-public class ResourceSoTConduitActionResponse extends VirtualDBMethodOutcome implements Comparable<ResourceSoTConduitActionResponse>{
+public class ResourceSoTConduitActionResponse extends TransactionMethodOutcome implements Comparable<ResourceSoTConduitActionResponse>{
     @Deprecated
     private Reference sourceOfTruthEndpoint;
     @Deprecated
@@ -59,7 +58,7 @@ public class ResourceSoTConduitActionResponse extends VirtualDBMethodOutcome imp
         sourceOfTruthOwningOrganization = null;
     }
 
-    public ResourceSoTConduitActionResponse(String sotName, PegacornFunctionStatusEnum functionStatus, VirtualDBActionTypeEnum action, Identifier identifier, MethodOutcome ori){
+    public ResourceSoTConduitActionResponse(String sotName, PegacornFunctionStatusEnum functionStatus, TransactionTypeEnum action, Identifier identifier, MethodOutcome ori){
         super(action,identifier,ori);
         sourceOfTruthName = sotName;
         functionStatusEnum = functionStatus;
@@ -86,7 +85,7 @@ public class ResourceSoTConduitActionResponse extends VirtualDBMethodOutcome imp
         anecdotalAttributes = new HashSet<>();
     }
 
-    public ResourceSoTConduitActionResponse(Reference originatingSystem, Reference originatingOrganization, VirtualDBActionTypeEnum action, Identifier identifier, MethodOutcome ori){
+    public ResourceSoTConduitActionResponse(Reference originatingSystem, Reference originatingOrganization, TransactionTypeEnum action, Identifier identifier, MethodOutcome ori){
         super(action,identifier,ori);
         immutableAttributes = new HashSet<>();
         authoritativeAttributes = new HashSet<>();

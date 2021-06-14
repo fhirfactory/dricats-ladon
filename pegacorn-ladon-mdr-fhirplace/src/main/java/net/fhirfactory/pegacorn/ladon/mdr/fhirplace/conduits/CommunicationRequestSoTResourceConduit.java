@@ -21,33 +21,25 @@
  */
 package net.fhirfactory.pegacorn.ladon.mdr.fhirplace.conduits;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
-import org.hl7.fhir.r4.model.CommunicationRequest;
-import org.hl7.fhir.r4.model.IdType;
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Property;
-import org.hl7.fhir.r4.model.Resource;
-import org.hl7.fhir.r4.model.ResourceType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import net.fhirfactory.pegacorn.ladon.mdr.conduit.controller.CommunicationRequestSoTConduitController;
 import net.fhirfactory.pegacorn.ladon.mdr.fhirplace.accessor.FHIRPlaceClinicalRequestAndResponseMDRAccessor;
 import net.fhirfactory.pegacorn.ladon.mdr.fhirplace.conduits.common.FHIRPlaceSoTConduitCommon;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.businesskey.VirtualDBKeyManagement;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceGradeEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponse;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitSearchResponseElement;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.SoTConduitGradeEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.searches.SearchNameEnum;
-import net.fhirfactory.pegacorn.platform.restfulapi.PegacornInternalFHIRClientServices;
+import net.fhirfactory.pegacorn.platform.edge.ask.InternalFHIRClientServices;
+import org.hl7.fhir.r4.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 @ApplicationScoped
 public class CommunicationRequestSoTResourceConduit extends FHIRPlaceSoTConduitCommon {
@@ -55,9 +47,6 @@ public class CommunicationRequestSoTResourceConduit extends FHIRPlaceSoTConduitC
 
     @Inject
     private CommunicationRequestSoTConduitController conduitController;
-
-    @Inject
-    VirtualDBKeyManagement virtualDBKeyResolver;
 
     @Inject
     private FHIRPlaceClinicalRequestAndResponseMDRAccessor servicesAccessor;
@@ -69,11 +58,11 @@ public class CommunicationRequestSoTResourceConduit extends FHIRPlaceSoTConduitC
 
     @Override
     protected String specifySourceOfTruthEndpointSystemName() {
-        return (getPegacornFHIRPlaceMDRComponentNames().getClinicalRequestAndResponsePegacornMDRSubsystem());
+        return (servicesAccessor.getFHIRServerSubsystemName());
     }
 
     @Override
-    protected PegacornInternalFHIRClientServices specifySecureAccessor() {
+    protected InternalFHIRClientServices specifySecureAccessor() {
         return (servicesAccessor);
     }
 
@@ -88,7 +77,7 @@ public class CommunicationRequestSoTResourceConduit extends FHIRPlaceSoTConduitC
         }
         CommunicationRequest actualResource = (CommunicationRequest)containedResource;
         if(actualResource.hasIdentifier()){
-            Identifier bestIdentifier = virtualDBKeyResolver.getBestIdentifier(actualResource.getIdentifier());
+            Identifier bestIdentifier = getIdentifierDataTypeHelpers().getBestIdentifier(actualResource.getIdentifier());
             return(bestIdentifier);
         }
         return(null);

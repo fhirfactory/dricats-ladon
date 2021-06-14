@@ -146,7 +146,7 @@
             <logger category="net.fhirfactory.pegacorn.deployment.topology.initialiser">
                 <level name="TRACE"/>
             </logger>
-            <logger category="net.fhirfactory.pegacorn.deployment.topology.map.standalone">
+            <logger category="net.fhirfactory.pegacorn.deployment.topology.factories.standalone">
                 <level name="DEBUG"/>
             </logger>
             <logger category="ca.uhn.fhir.context">

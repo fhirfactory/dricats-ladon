@@ -23,7 +23,7 @@ package net.fhirfactory.pegacorn.ladon.model.virtualdb.cache;
 
 import net.fhirfactory.pegacorn.ladon.model.status.common.LadonComponentErrorLevelEnum;
 import net.fhirfactory.pegacorn.ladon.model.status.common.LadonComponentStatusElement;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionStatusEnum;
 import org.hl7.fhir.r4.model.IdType;
 
 import java.time.LocalDateTime;
@@ -31,7 +31,7 @@ import java.time.LocalDateTime;
 public class CacheActivityStatusElement extends LadonComponentStatusElement {
     private IdType resourceId;
     private CacheActivityActionEnum action;
-    private VirtualDBActionStatusEnum status;
+    private TransactionStatusEnum status;
     private CacheActivityOutcomeEnum outcome;
     private LadonComponentErrorLevelEnum errorLevel;
     private LocalDateTime updateDate;
@@ -77,11 +77,11 @@ public class CacheActivityStatusElement extends LadonComponentStatusElement {
         this.action = action;
     }
 
-    public VirtualDBActionStatusEnum getStatus() {
+    public TransactionStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(VirtualDBActionStatusEnum status) {
+    public void setStatus(TransactionStatusEnum status) {
         this.status = status;
     }
 

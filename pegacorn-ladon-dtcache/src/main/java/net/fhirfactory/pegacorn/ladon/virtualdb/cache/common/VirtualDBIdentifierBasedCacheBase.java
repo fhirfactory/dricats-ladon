@@ -21,11 +21,11 @@
  */
 package net.fhirfactory.pegacorn.ladon.virtualdb.cache.common;
 
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.businesskey.VirtualDBKeyManagement;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionStatusEnum;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionTypeEnum;
+import net.fhirfactory.pegacorn.internals.fhir.r4.resources.identifier.PegacornIdentifierDataTypeHelpers;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.cache.CacheResourceEntry;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionTypeEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
 import org.hl7.fhir.r4.model.*;
 import org.slf4j.Logger;
 
@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class VirtualDBIdentifierBasedCacheBase {
 
     @Inject
-    private VirtualDBKeyManagement virtualDBKeyManagement;
+    private PegacornIdentifierDataTypeHelpers identifierDataTypeHelpers;
 
     private ConcurrentHashMap<Identifier, CacheResourceEntry> resourceCacheByBusinessKey;
     private ConcurrentHashMap<String, Object> resourceCacheLockSet;
@@ -77,7 +77,7 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
      * @return A VirtualDBMethodOutcome instance detailing the success (or otherwise) of the Resource
      * addition to the Cache.
      */
-    private VirtualDBMethodOutcome addResourceToCache(Identifier identifier, Resource resourceToAdd){
+    private TransactionMethodOutcome addResourceToCache(Identifier identifier, Resource resourceToAdd){
         // Perform house-keeping on the Cache
         purgeResourcesFromCache();
         // House-keeping done
@@ -85,12 +85,12 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
         getLogger().debug(".addResourceToCache(): Entry, identifier (Identifier) --> {}, resourceToAdd (Resource) --> {}", identifier, resourceToAdd);
         if(identifier == null) {
             getLogger().error(".addResourceToCache(): identifier (Identifier) is null, failing out");
-            VirtualDBMethodOutcome vdbOutcome = generateBadAttributeOutcome("addResourceToCache", VirtualDBActionTypeEnum.CREATE, VirtualDBActionStatusEnum.CREATION_FAILURE, "Parameter identifier (Identifier) content is invalid");
+            TransactionMethodOutcome vdbOutcome = generateBadAttributeOutcome("addResourceToCache", TransactionTypeEnum.CREATE, TransactionStatusEnum.CREATION_FAILURE, "Parameter identifier (Identifier) content is invalid");
             return (vdbOutcome);
         }
         if(resourceToAdd == null) {
             getLogger().error(".addResourceToCache(): resourceToAdd (Resource) is null, failing out");
-            VirtualDBMethodOutcome vdbOutcome = generateBadAttributeOutcome("addResourceToCache", VirtualDBActionTypeEnum.CREATE, VirtualDBActionStatusEnum.CREATION_FAILURE, "Parameter resourceToAdd (Resource) content is invalid");
+            TransactionMethodOutcome vdbOutcome = generateBadAttributeOutcome("addResourceToCache", TransactionTypeEnum.CREATE, TransactionStatusEnum.CREATION_FAILURE, "Parameter resourceToAdd (Resource) content is invalid");
             return (vdbOutcome);
         }
         if(!resourceToAdd.hasId()){
@@ -112,12 +112,12 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
             if(resourceEntry != null){
                 Resource existingResource = resourceEntry.getResource();
                 if(areTheSame(existingResource, resourceToAdd)){
-                    VirtualDBMethodOutcome vdbOutcome = new VirtualDBMethodOutcome();
+                    TransactionMethodOutcome vdbOutcome = new TransactionMethodOutcome();
                     vdbOutcome.setId(existingResource.getIdElement());
                     vdbOutcome.setCreated(false);
                     vdbOutcome.setResource(existingResource);
-                    vdbOutcome.setCausalAction(VirtualDBActionTypeEnum.CREATE);
-                    vdbOutcome.setStatusEnum(VirtualDBActionStatusEnum.CREATION_NOT_REQUIRED);
+                    vdbOutcome.setCausalAction(TransactionTypeEnum.CREATE);
+                    vdbOutcome.setStatusEnum(TransactionStatusEnum.CREATION_NOT_REQUIRED);
                     OperationOutcome opOutcome = new OperationOutcome();
                     opOutcome.setId(existingResource.getIdElement());
                     OperationOutcome.OperationOutcomeIssueComponent newOutcomeComponent = new OperationOutcome.OperationOutcomeIssueComponent();
@@ -161,7 +161,7 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
                 break;
             }
         }
-        VirtualDBMethodOutcome vdbOutcome = new VirtualDBMethodOutcome();
+        TransactionMethodOutcome vdbOutcome = new TransactionMethodOutcome();
         OperationOutcome opOutcome = new OperationOutcome();
         if(alreadyExists){
             CacheResourceEntry existingResourceEntry = resourceCacheByBusinessKey.get(existingKey);
@@ -171,7 +171,7 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
             vdbOutcome.setId(existingResource.getIdElement());
             opOutcome.setId(existingResource.getIdElement());
             vdbOutcome.setCreated(false);
-            vdbOutcome.setStatusEnum(VirtualDBActionStatusEnum.CREATION_NOT_REQUIRED);
+            vdbOutcome.setStatusEnum(TransactionStatusEnum.CREATION_NOT_REQUIRED);
         } else {
             CacheResourceEntry cacheEntry = new CacheResourceEntry(resourceToAdd);
             resourceCacheByBusinessKey.put(identifier, cacheEntry);
@@ -180,9 +180,9 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
             vdbOutcome.setResource(resourceToAdd);
             opOutcome.setId(resourceToAdd.getIdElement());
             vdbOutcome.setCreated(true);
-            vdbOutcome.setStatusEnum(VirtualDBActionStatusEnum.CREATION_FINISH);
+            vdbOutcome.setStatusEnum(TransactionStatusEnum.CREATION_FINISH);
         }
-        vdbOutcome.setCausalAction(VirtualDBActionTypeEnum.CREATE);
+        vdbOutcome.setCausalAction(TransactionTypeEnum.CREATE);
         OperationOutcome.OperationOutcomeIssueComponent newOutcomeComponent = new OperationOutcome.OperationOutcomeIssueComponent();
         newOutcomeComponent.setCode(OperationOutcome.IssueType.INFORMATIONAL);
         newOutcomeComponent.setSeverity(OperationOutcome.IssueSeverity.INFORMATION);
@@ -208,14 +208,14 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
      * @param resourceToRemove
      * @return A VirtualDBMethodOutcome instance detailing the success (or otherwise) of the Resource removal activity.
      */
-    private VirtualDBMethodOutcome deleteResourceFromCache(Identifier identifier, Resource resourceToRemove){
+    private TransactionMethodOutcome deleteResourceFromCache(Identifier identifier, Resource resourceToRemove){
         // Perform house-keeping on the Cache
         purgeResourcesFromCache();
         // House-keeping done
 
         if(identifier == null){
             getLogger().error(".deleteResourceFromCache(): identifier (Identifier) is null, failing out");
-            VirtualDBMethodOutcome vdbOutcome = generateBadAttributeOutcome("deleteResourceFromCache", VirtualDBActionTypeEnum.DELETE, VirtualDBActionStatusEnum.DELETE_FAILURE, "Parameter identifier (Identifier) content is invalid");
+            TransactionMethodOutcome vdbOutcome = generateBadAttributeOutcome("deleteResourceFromCache", TransactionTypeEnum.DELETE, TransactionStatusEnum.DELETE_FAILURE, "Parameter identifier (Identifier) content is invalid");
             return(vdbOutcome);
         }
         CacheResourceEntry resourceEntry = resourceCacheByBusinessKey.get(identifier);
@@ -254,14 +254,14 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
                 }
             }
         }
-        VirtualDBMethodOutcome vdbOutcome = new VirtualDBMethodOutcome();
+        TransactionMethodOutcome vdbOutcome = new TransactionMethodOutcome();
         vdbOutcome.setCreated(false);
         if(deleteId != null) {
             vdbOutcome.setId(deleteId);
         }
         vdbOutcome.setResource(resourceToRemove);
-        vdbOutcome.setCausalAction(VirtualDBActionTypeEnum.DELETE);
-        vdbOutcome.setStatusEnum(VirtualDBActionStatusEnum.DELETE_FINISH);
+        vdbOutcome.setCausalAction(TransactionTypeEnum.DELETE);
+        vdbOutcome.setStatusEnum(TransactionStatusEnum.DELETE_FINISH);
         OperationOutcome opOutcome = new OperationOutcome();
         OperationOutcome.OperationOutcomeIssueComponent newOutcomeComponent = new OperationOutcome.OperationOutcomeIssueComponent();
         newOutcomeComponent.setCode(OperationOutcome.IssueType.DELETED);
@@ -288,11 +288,11 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
      * @param identifier
      * @return
      */
-    private VirtualDBMethodOutcome getResourceFromCache(Identifier identifier){
+    private TransactionMethodOutcome getResourceFromCache(Identifier identifier){
         getLogger().debug(".getResourceFromCache(): Entry, identifier (Identifier) --> {}", identifier);
         if(identifier == null){
             getLogger().error(".getResourceFromCache(): identifier (Identifier) is null, failing out");
-            VirtualDBMethodOutcome vdbOutcome = generateBadAttributeOutcome("getResourceFromCache", VirtualDBActionTypeEnum.REVIEW, VirtualDBActionStatusEnum.REVIEW_FAILURE, "Parameter identifier (Identifier) content is invalid");
+            TransactionMethodOutcome vdbOutcome = generateBadAttributeOutcome("getResourceFromCache", TransactionTypeEnum.REVIEW, TransactionStatusEnum.REVIEW_FAILURE, "Parameter identifier (Identifier) content is invalid");
             return(vdbOutcome);
         }
         CacheResourceEntry retrievedResourceEntry = resourceCacheByBusinessKey.get(identifier);
@@ -314,11 +314,11 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
             noResource = true;
         }
         if(noResource) {
-            VirtualDBMethodOutcome vdbOutcome = new VirtualDBMethodOutcome();
+            TransactionMethodOutcome vdbOutcome = new TransactionMethodOutcome();
             vdbOutcome.setCreated(false);
             vdbOutcome.setIdentifier(identifier);
-            vdbOutcome.setCausalAction(VirtualDBActionTypeEnum.REVIEW);
-            vdbOutcome.setStatusEnum(VirtualDBActionStatusEnum.REVIEW_FAILURE);
+            vdbOutcome.setCausalAction(TransactionTypeEnum.REVIEW);
+            vdbOutcome.setStatusEnum(TransactionStatusEnum.REVIEW_FAILURE);
             OperationOutcome opOutcome = new OperationOutcome();
             OperationOutcome.OperationOutcomeIssueComponent newOutcomeComponent = new OperationOutcome.OperationOutcomeIssueComponent();
             newOutcomeComponent.setCode(OperationOutcome.IssueType.NOTFOUND);
@@ -337,12 +337,12 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
             getLogger().debug(".getResourceFromCache(): exit, could not find resource");
             return (vdbOutcome);
         } else {
-            VirtualDBMethodOutcome vdbOutcome = new VirtualDBMethodOutcome();
+            TransactionMethodOutcome vdbOutcome = new TransactionMethodOutcome();
             vdbOutcome.setCreated(false);
             vdbOutcome.setIdentifier(identifier);
             vdbOutcome.setResource(retrievedResource);
-            vdbOutcome.setCausalAction(VirtualDBActionTypeEnum.REVIEW);
-            vdbOutcome.setStatusEnum(VirtualDBActionStatusEnum.REVIEW_FINISH);
+            vdbOutcome.setCausalAction(TransactionTypeEnum.REVIEW);
+            vdbOutcome.setStatusEnum(TransactionStatusEnum.REVIEW_FINISH);
             OperationOutcome opOutcome = new OperationOutcome();
             OperationOutcome.OperationOutcomeIssueComponent newOutcomeComponent = new OperationOutcome.OperationOutcomeIssueComponent();
             newOutcomeComponent.setCode(OperationOutcome.IssueType.INFORMATIONAL);
@@ -401,8 +401,8 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
     // Shared Methods
     //
 
-    private VirtualDBMethodOutcome generateBadAttributeOutcome(String method, VirtualDBActionTypeEnum action, VirtualDBActionStatusEnum actionStatus, String text){
-        VirtualDBMethodOutcome vdbOutcome = new VirtualDBMethodOutcome();
+    private TransactionMethodOutcome generateBadAttributeOutcome(String method, TransactionTypeEnum action, TransactionStatusEnum actionStatus, String text){
+        TransactionMethodOutcome vdbOutcome = new TransactionMethodOutcome();
         vdbOutcome.setCreated(false);
         vdbOutcome.setCausalAction(action);
         vdbOutcome.setStatusEnum(actionStatus);
@@ -453,7 +453,7 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
      * @return The "Best" identifier from the set.
      */
     protected Identifier getBestIdentifier(List<Identifier> identifierSet){
-        Identifier bestIdentifier = virtualDBKeyManagement.getBestIdentifier(identifierSet);
+        Identifier bestIdentifier = identifierDataTypeHelpers.getBestIdentifier(identifierSet);
         return(bestIdentifier);
     }
 
@@ -461,47 +461,47 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
     // Public Cache Methods
     //
 
-    public VirtualDBMethodOutcome getResource(Identifier identifier){
+    public TransactionMethodOutcome getResource(Identifier identifier){
         getLogger().debug(".getResource(): Entry, id (Identifier) --> {}", identifier);
-        VirtualDBMethodOutcome retrievedCareTeam = getResourceFromCache(identifier);
+        TransactionMethodOutcome retrievedCareTeam = getResourceFromCache(identifier);
         getLogger().debug(".getResource(): Exit, outcome --> {}", retrievedCareTeam);
         return(retrievedCareTeam);
     }
 
-    public VirtualDBMethodOutcome createResource(Resource resourceToAdd){
+    public TransactionMethodOutcome createResource(Resource resourceToAdd){
         getLogger().debug(".createResource(): resourceToAdd --> {}", resourceToAdd);
         Identifier identifier = getBestIdentifier(resolveIdentifierSet(resourceToAdd));
-        VirtualDBMethodOutcome outcome = addResourceToCache(identifier, resourceToAdd);
+        TransactionMethodOutcome outcome = addResourceToCache(identifier, resourceToAdd);
         getLogger().debug(".createResource(): Resource inserted, outcome (VirtualDBMethodOutcome) --> {}", outcome);
         return(outcome);
     }
 
-    public VirtualDBMethodOutcome deleteResource(Resource resourceToRemove){
+    public TransactionMethodOutcome deleteResource(Resource resourceToRemove){
         getLogger().debug(".removeResource(): resourceToRemove --> {}", resourceToRemove);
         Identifier defaultIdentifier = getBestIdentifier(resolveIdentifierSet(resourceToRemove));
-        VirtualDBMethodOutcome outcome = deleteResourceFromCache(defaultIdentifier, resourceToRemove);
+        TransactionMethodOutcome outcome = deleteResourceFromCache(defaultIdentifier, resourceToRemove);
         getLogger().debug(".removeResource(): Resource removed, outcome (VirtualDBMethodOutcome) --> {}", outcome);
         return(outcome);
     }
 
-    public VirtualDBMethodOutcome updateResource(Resource resourceToUpdate){
+    public TransactionMethodOutcome updateResource(Resource resourceToUpdate){
         getLogger().debug(".updateResource(): resourceToUpdate --> {}", resourceToUpdate);
         Identifier defaultIdentifier = getBestIdentifier(resolveIdentifierSet(resourceToUpdate));
-        VirtualDBMethodOutcome deleteOutcome = deleteResourceFromCache(defaultIdentifier, resourceToUpdate);
-        VirtualDBMethodOutcome updateOutcome = addResourceToCache(defaultIdentifier, resourceToUpdate);
+        TransactionMethodOutcome deleteOutcome = deleteResourceFromCache(defaultIdentifier, resourceToUpdate);
+        TransactionMethodOutcome updateOutcome = addResourceToCache(defaultIdentifier, resourceToUpdate);
         getLogger().debug(".updateResource(): Resource updated, outcome (VirtualDBMethodOutcome) --> {}", updateOutcome);
         return(updateOutcome);
     }
 
-    public VirtualDBMethodOutcome syncResource(Resource resourceToSync){
+    public TransactionMethodOutcome syncResource(Resource resourceToSync){
         if(resourceToSync == null){
-            VirtualDBMethodOutcome vdbOutcome = generateBadAttributeOutcome("syncResource", VirtualDBActionTypeEnum.SYNC, VirtualDBActionStatusEnum.SYNC_FAILURE, "Parameter resourceToSync (Resource) content is invalid");
+            TransactionMethodOutcome vdbOutcome = generateBadAttributeOutcome("syncResource", TransactionTypeEnum.SYNC, TransactionStatusEnum.SYNC_FAILURE, "Parameter resourceToSync (Resource) content is invalid");
             return(vdbOutcome);
         }
         List<Identifier> identifierSet = resolveIdentifierSet(resourceToSync);
         Identifier bestIdentifier = getBestIdentifier(identifierSet);
         if(bestIdentifier == null){
-            VirtualDBMethodOutcome vdbOutcome = generateBadAttributeOutcome("syncResource", VirtualDBActionTypeEnum.SYNC, VirtualDBActionStatusEnum.SYNC_FAILURE, "Parameter identifier (Identifier) content is invalid");
+            TransactionMethodOutcome vdbOutcome = generateBadAttributeOutcome("syncResource", TransactionTypeEnum.SYNC, TransactionStatusEnum.SYNC_FAILURE, "Parameter identifier (Identifier) content is invalid");
             return(vdbOutcome);
         }
         if(!resourceToSync.hasId()){
@@ -516,21 +516,21 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
             }
             CacheResourceEntry cacheEntry = resourceCacheByBusinessKey.get(bestIdentifier);
             if(cacheEntry == null){
-                VirtualDBMethodOutcome vdbOutcome = generateBadAttributeOutcome("syncResource", VirtualDBActionTypeEnum.SYNC, VirtualDBActionStatusEnum.SYNC_FAILURE, "Parameter identifier (Identifier) content is invalid");
+                TransactionMethodOutcome vdbOutcome = generateBadAttributeOutcome("syncResource", TransactionTypeEnum.SYNC, TransactionStatusEnum.SYNC_FAILURE, "Parameter identifier (Identifier) content is invalid");
                 return(vdbOutcome);
             }
             Resource cacheResource = cacheEntry.getResource();
             if(cacheResource == null){
-                VirtualDBMethodOutcome vdbOutcome = generateBadAttributeOutcome("syncResource", VirtualDBActionTypeEnum.SYNC, VirtualDBActionStatusEnum.SYNC_FAILURE, "Parameter identifier (Identifier) content is invalid");
+                TransactionMethodOutcome vdbOutcome = generateBadAttributeOutcome("syncResource", TransactionTypeEnum.SYNC, TransactionStatusEnum.SYNC_FAILURE, "Parameter identifier (Identifier) content is invalid");
                 return(vdbOutcome);
             }
             synchronized(lockObject) {
                 synchroniseResource(cacheResource, resourceToSync);
             }
-            VirtualDBMethodOutcome outcome = new VirtualDBMethodOutcome();
+            TransactionMethodOutcome outcome = new TransactionMethodOutcome();
             outcome.setCreated(false);
-            outcome.setCausalAction(VirtualDBActionTypeEnum.SYNC);
-            outcome.setStatusEnum(VirtualDBActionStatusEnum.SYNC_FINISHED);
+            outcome.setCausalAction(TransactionTypeEnum.SYNC);
+            outcome.setStatusEnum(TransactionStatusEnum.SYNC_FINISHED);
             CodeableConcept details = new CodeableConcept();
             Coding detailsCoding = new Coding();
             detailsCoding.setSystem("https://www.hl7.org/fhir/codesystem-operation-outcome.html");
@@ -549,9 +549,9 @@ public abstract class VirtualDBIdentifierBasedCacheBase {
             outcome.setOperationOutcome(opOutcome);
             return(outcome);
         } else {
-            VirtualDBMethodOutcome outcome = createResource(resourceToSync);
-            outcome.setCausalAction(VirtualDBActionTypeEnum.SYNC);
-            outcome.setStatusEnum(VirtualDBActionStatusEnum.SYNC_FINISHED);
+            TransactionMethodOutcome outcome = createResource(resourceToSync);
+            outcome.setCausalAction(TransactionTypeEnum.SYNC);
+            outcome.setStatusEnum(TransactionStatusEnum.SYNC_FINISHED);
             return(outcome);
         }
     }

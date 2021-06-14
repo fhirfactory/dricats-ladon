@@ -41,9 +41,9 @@ import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceGradeEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponse;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitSearchResponseElement;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.SoTResourceConduit;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcomeFactory;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionStatusEnum;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcomeFactory;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.searches.SearchNameEnum;
 
 public abstract class ResourceSoTConduitController {
@@ -53,7 +53,7 @@ public abstract class ResourceSoTConduitController {
     private ResourceType resourceType;
 
     @Inject
-    VirtualDBMethodOutcomeFactory outcomeFactory;
+    TransactionMethodOutcomeFactory outcomeFactory;
 
     public ResourceSoTConduitController(){
         this.conduitSet = new HashSet<>();
@@ -103,7 +103,7 @@ public abstract class ResourceSoTConduitController {
         for(SoTResourceConduit currentConduit: conduitSet){
             getLogger().debug(".getResourceFromEachConduit(Identifier): trying conduit --> {}", currentConduit.getConduitName());
             ResourceSoTConduitActionResponse currentResponse = currentConduit.getResourceViaIdentifier(identifier);
-            if(currentResponse.hasResource() && currentResponse.getStatusEnum().equals(VirtualDBActionStatusEnum.REVIEW_FINISH)) {
+            if(currentResponse.hasResource() && currentResponse.getStatusEnum().equals(TransactionStatusEnum.REVIEW_FINISH)) {
                 loadedResources.add(currentResponse);
             }
         }
@@ -230,52 +230,52 @@ public abstract class ResourceSoTConduitController {
     // Public Methods
     //
 
-    public VirtualDBMethodOutcome createResource(Resource resourceToCreate) {
+    public TransactionMethodOutcome createResource(Resource resourceToCreate) {
         List<ResourceSoTConduitActionResponse> methodOutcomes = this.createResourceViaEachConduit(resourceToCreate);
-        VirtualDBMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateCreateResponseSet(methodOutcomes);
+        TransactionMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateCreateResponseSet(methodOutcomes);
         return(aggregatedMethodOutcome);
     }
 
-    public VirtualDBMethodOutcome reviewResource(Identifier identifier) {
+    public TransactionMethodOutcome reviewResource(Identifier identifier) {
         getLogger().info(".reviewResource(): Entry, identifier --> {}");
         List<ResourceSoTConduitActionResponse> methodOutcomes = this.getResourceFromEachConduit(identifier);
         if(methodOutcomes.isEmpty()){
             getLogger().info(".reviewResource(): Failed to find a resource, generating failed outcome");
             String activityLocation = getResourceType().toString() + "reviewResource()";
-            VirtualDBMethodOutcome aggregatedMethodOutcome = outcomeFactory.createResourceActivityOutcome(null, VirtualDBActionStatusEnum.REVIEW_FAILURE,activityLocation);
+            TransactionMethodOutcome aggregatedMethodOutcome = outcomeFactory.createResourceActivityOutcome(null, TransactionStatusEnum.REVIEW_FAILURE,activityLocation);
             getLogger().info(".reviewResource(): Exit, failed to find a resource from any Source of Truth, exiting");
             return(aggregatedMethodOutcome);
         } else {
             getLogger().info(".reviewResource(): Exit, found at least one resource, aggregating results");
-            VirtualDBMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateGetResponseSet(methodOutcomes);
+            TransactionMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateGetResponseSet(methodOutcomes);
             getLogger().info(".reviewResource(): Exit, found at least one resource, returning it");
             return (aggregatedMethodOutcome);
         }
     }
 
-    public VirtualDBMethodOutcome reviewResource(IdType id) {
+    public TransactionMethodOutcome reviewResource(IdType id) {
         List<ResourceSoTConduitActionResponse> methodOutcomes = this.getResourceFromEachConduit(id);
-        VirtualDBMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateGetResponseSet(methodOutcomes);
+        TransactionMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateGetResponseSet(methodOutcomes);
         return(aggregatedMethodOutcome);
     }
 
-    public VirtualDBMethodOutcome updateResource(Resource resourceToUpdate) {
+    public TransactionMethodOutcome updateResource(Resource resourceToUpdate) {
         List<ResourceSoTConduitActionResponse> methodOutcomes = this.updateResourceViaEachConduit(resourceToUpdate);
-        VirtualDBMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateUpdateResponseSet(methodOutcomes);
+        TransactionMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateUpdateResponseSet(methodOutcomes);
         return(aggregatedMethodOutcome);
     }
 
-    public VirtualDBMethodOutcome deleteResource(Resource resourceToDelete) {
+    public TransactionMethodOutcome deleteResource(Resource resourceToDelete) {
         List<ResourceSoTConduitActionResponse> methodOutcomes = this.deleteResourceViaEachConduit(resourceToDelete);
-        VirtualDBMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateDeleteResponseSet(methodOutcomes);
+        TransactionMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateDeleteResponseSet(methodOutcomes);
         return(aggregatedMethodOutcome);
     }
 
-    public VirtualDBMethodOutcome getResourcesViaSearchCriteria(ResourceType resourceType, SearchNameEnum searchName, Map<Property, Serializable> parameterSet) {
+    public TransactionMethodOutcome getResourcesViaSearchCriteria(ResourceType resourceType, SearchNameEnum searchName, Map<Property, Serializable> parameterSet) {
         getLogger().debug("ResourceSoTConduitController::getResourcesViaSearchCriteria(): Entry");
         List<ResourceSoTConduitSearchResponseElement> responseElements = this.attemptResourceSearch(searchName, parameterSet);
         getLogger().trace("ResourceSoTConduitController::getResourcesViaSearchCriteria(): attempted search, now consolidating");
-        VirtualDBMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateSearchResultSet(responseElements);
+        TransactionMethodOutcome aggregatedMethodOutcome = getAggregationService().aggregateSearchResultSet(responseElements);
         getLogger().debug("ResourceSoTConduitController::getResourcesViaSearchCriteria(): Exit");
         return(aggregatedMethodOutcome);
     }

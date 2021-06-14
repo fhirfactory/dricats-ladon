@@ -2,6 +2,7 @@ package net.fhirfactory.pegacorn.ladon.mdr.conduit.core;
 
 import javax.inject.Inject;
 
+import net.fhirfactory.pegacorn.platform.edge.ask.InternalFHIRClientServices;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Identifier;
@@ -13,9 +14,8 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponse;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponseFactory;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.SoTResourceConduit;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionStatusEnum;
 import net.fhirfactory.pegacorn.petasos.model.itops.PegacornFunctionStatusEnum;
-import net.fhirfactory.pegacorn.platform.restfulapi.PegacornInternalFHIRClientServices;
 import net.fhirfactory.pegacorn.util.FHIRContextUtility;
 
 public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit {
@@ -38,9 +38,9 @@ public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit 
         return(getFHIRServiceAccessor().getClient());
     }
 
-    abstract protected PegacornInternalFHIRClientServices specifySecureAccessor();
+    abstract protected InternalFHIRClientServices specifySecureAccessor();
 
-    protected PegacornInternalFHIRClientServices getFHIRServiceAccessor(){
+    protected InternalFHIRClientServices getFHIRServiceAccessor(){
         return(specifySecureAccessor());
     }
 
@@ -83,7 +83,7 @@ public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit 
             // There was no response to the query or it was in error....
             getLogger().trace(".standardGetResourceViaIdentifier(): There was no response to the query or it was in error....");
             ResourceSoTConduitActionResponse outcome = sotConduitOutcomeFactory.createResourceConduitActionResponse(
-                    getSourceOfTruthEndpointName(), PegacornFunctionStatusEnum.FUNCTION_STATUS_OK, null, null, VirtualDBActionStatusEnum.REVIEW_FAILURE, activityLocation);
+                    getSourceOfTruthEndpointName(), PegacornFunctionStatusEnum.FUNCTION_STATUS_OK, null, null, TransactionStatusEnum.REVIEW_FAILURE, activityLocation);
             outcome.setIdentifier(identifier);
             outcome.setResource(null);
             getLogger().debug(".standardGetResourceViaIdentifier(): Exit, Returning \"failed\" outcome....");
@@ -99,7 +99,7 @@ public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit 
                 PegacornFunctionStatusEnum.FUNCTION_STATUS_OK,
                 retrievedResource,
                 null,
-                VirtualDBActionStatusEnum.REVIEW_FINISH,
+                TransactionStatusEnum.REVIEW_FINISH,
                 activityLocation);
         outcome.setIdentifier(identifier);
         getLogger().debug(".standardGetResourceViaIdentifier(): Exit, outcome --> {}", outcome);
@@ -149,7 +149,7 @@ public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit 
                     PegacornFunctionStatusEnum.FUNCTION_STATUS_OK,
                     null,
                     id,
-                    VirtualDBActionStatusEnum.REVIEW_FAILURE,
+                    TransactionStatusEnum.REVIEW_FAILURE,
                     activityLocation);
             return(outcome);
         } else {
@@ -158,7 +158,7 @@ public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit 
                     PegacornFunctionStatusEnum.FUNCTION_STATUS_OK,
                     retrievedResource,
                     null,
-                    VirtualDBActionStatusEnum.REVIEW_FINISH,
+                    TransactionStatusEnum.REVIEW_FINISH,
                     activityLocation);
             getLogger().debug(".standardReviewResource(): Exit, outcome --> {}", outcome);
             return (outcome);

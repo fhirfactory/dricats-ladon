@@ -21,46 +21,17 @@
  */
 package net.fhirfactory.pegacorn.ladon.mdr.fhirplace.accessor;
 
-import net.fhirfactory.pegacorn.deployment.names.PegacornFHIRPlaceMDRComponentNames;
-import net.fhirfactory.pegacorn.platform.restfulapi.PegacornInternalFHIRClientServices;
+import net.fhirfactory.pegacorn.ladon.mdr.fhirplace.accessor.common.FHIRPlaceMDRDefaultAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 @ApplicationScoped
-public class FHIRPlaceClinicalSummaryMDRAccessor extends PegacornInternalFHIRClientServices {
+public class FHIRPlaceClinicalSummaryMDRAccessor extends FHIRPlaceMDRDefaultAccessor {
     private static final Logger LOG = LoggerFactory.getLogger(FHIRPlaceClinicalSummaryMDRAccessor.class);
 
     @Override
     protected Logger getLogger(){return(LOG);}
 
-    @Inject
-    private PegacornFHIRPlaceMDRComponentNames pegacornMDRComponentNames;
-
-    @Override
-    protected String specifyFHIRServerService() {
-        return (pegacornMDRComponentNames.getClinicalSummaryPegacornMDRService());
-    }
-
-    @Override
-    protected String specifyFHIRServerProcessingPlant() {
-        return (pegacornMDRComponentNames.getClinicalSummaryPegacornMDRProcessingPlant());
-    }
-
-    @Override
-    protected String specifyFHIRServerSubsystemName() {
-        return (pegacornMDRComponentNames.getClinicalSummaryPegacornMDRSubsystem());
-    }
-
-    @Override
-    protected String specifyFHIRServerSubsystemVersion() {
-        return (pegacornMDRComponentNames.getClinicalSummaryPegacornMDRSubsystemVersion());
-    }
-
-    @Override
-    protected String specifyFHIRServerServerEndpointName() {
-        return (pegacornMDRComponentNames.getClinicalSummaryPegacornMDREndpointFhirApi());
-    }
 }

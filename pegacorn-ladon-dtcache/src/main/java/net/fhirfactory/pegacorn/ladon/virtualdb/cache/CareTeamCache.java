@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.pegacorn.ladon.virtualdb.cache;
 
-import net.fhirfactory.pegacorn.deployment.properties.LadonDefaultDeploymentProperties;
+import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.ladon.nexus.im.LadonNexusProperties;
 import net.fhirfactory.pegacorn.ladon.virtualdb.cache.common.VirtualDBIdTypeBasedCacheBase;
 import org.hl7.fhir.r4.model.CareTeam;
 import org.hl7.fhir.r4.model.Identifier;
@@ -39,7 +39,7 @@ public class CareTeamCache  extends VirtualDBIdTypeBasedCacheBase {
     private static final Logger LOG = LoggerFactory.getLogger(CareTeamCache.class);
 
     @Inject
-    LadonDefaultDeploymentProperties ladonProperties;
+    private LadonNexusProperties ladonProperties;
 
     public CareTeamCache(){
         super();

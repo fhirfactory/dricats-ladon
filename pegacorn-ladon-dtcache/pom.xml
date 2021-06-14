@@ -78,6 +78,9 @@
             <version>${version-org.apache.commons-lang3}</version>
         </dependency>
 
+        <!--                             -->
+        <!-- JSON Manipulation Libraries -->
+        <!--                             -->
 
         <dependency>
             <groupId>org.json</groupId>
@@ -124,14 +127,6 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-        <!-- Pegacorn Petasos Topology Services -->
-        <dependency>
-            <groupId>net.fhirfactory.pegacorn</groupId>
-            <artifactId>pegacorn-platform-petasos-topology</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
         <!-- Pegacorn Petasos Core Services -->
         <dependency>
             <groupId>net.fhirfactory.pegacorn</groupId>
@@ -149,7 +144,6 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-        
         <!-- Pegacorn Deployment Datasets -->
         <dependency>
             <groupId>net.fhirfactory.pegacorn</groupId>
@@ -158,7 +152,6 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-
         <!-- Pegacorn Ladon - Processing Plant -->
         <dependency>
             <groupId>net.fhirfactory.pegacorn</groupId>
@@ -167,7 +160,59 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
+        <!-- Pegacorn Ladon - MDR Core Services -->
+        <dependency>
+            <groupId>net.fhirfactory.pegacorn</groupId>
+            <artifactId>pegacorn-ladon-mdr-core</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Pegacorn - Building Block - Edge -->
+        <dependency>
+            <groupId>net.fhirfactory.pegacorn</groupId>
+            <artifactId>pegacorn-buildingblocks-edge-model</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Pegacorn - Building Block - Edge -->
+        <dependency>
+            <groupId>net.fhirfactory.pegacorn</groupId>
+            <artifactId>pegacorn-buildingblocks-edge-restful</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Pegacorn - Platform - Petasos - Audit -->
+        <dependency>
+            <groupId>net.fhirfactory.pegacorn</groupId>
+            <artifactId>pegacorn-platform-petasos-audit</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Pegacorn - Building Block - Work Unit Processor -->
+        <dependency>
+            <groupId>net.fhirfactory.pegacorn</groupId>
+            <artifactId>pegacorn-buildingblocks-workunitprocessors</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Pegacorn - Building Block - Edge - Model -->
+        <dependency>
+            <groupId>net.fhirfactory.pegacorn</groupId>
+            <artifactId>pegacorn-buildingblocks-edge-model</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Pegacorn - Building Block - Edge - Model -->
+        <dependency>
+            <groupId>net.fhirfactory.pegacorn</groupId>
+            <artifactId>pegacorn-buildingblocks-edge-restful</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
 
+        <!--            -->
+        <!-- Infinispan -->
+        <!--            -->
 
         <!-- Infinispan -->
         <dependency>
@@ -260,24 +305,7 @@
             <type>pom</type>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>net.fhirfactory.pegacorn</groupId>
-            <artifactId>pegacorn-platform-samples</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.fhirfactory.pegacorn</groupId>
-            <artifactId>pegacorn-ladon-mdr-core</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.fhirfactory.pegacorn</groupId>
-            <artifactId>pegacorn-buildingblocks-edge</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
+
 
     </dependencies>
 

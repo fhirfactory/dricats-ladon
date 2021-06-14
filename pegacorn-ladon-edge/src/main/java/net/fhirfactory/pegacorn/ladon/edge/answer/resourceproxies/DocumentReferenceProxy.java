@@ -21,43 +21,34 @@
  */
 package net.fhirfactory.pegacorn.ladon.edge.answer.resourceproxies;
 
+import ca.uhn.fhir.rest.annotation.*;
+import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.param.DateRangeParam;
+import ca.uhn.fhir.rest.param.TokenParam;
+import ca.uhn.fhir.rest.server.IResourceProvider;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionStatusEnum;
+import net.fhirfactory.pegacorn.internals.fhir.r4.operationaloutcome.OperationOutcomeGenerator;
+import net.fhirfactory.pegacorn.internals.fhir.r4.resources.bundle.BundleContentHelper;
+import net.fhirfactory.pegacorn.ladon.model.virtualdb.searches.SearchNameEnum;
+import net.fhirfactory.pegacorn.ladon.virtualdb.accessors.DocumentReferenceAccessor;
+import net.fhirfactory.pegacorn.platform.edge.answer.resourceproxies.common.EdgeSynchronousCRUDResourceBase;
+import net.fhirfactory.pegacorn.platform.edge.model.common.ResourceAccessorInterfaceBase;
+import org.hl7.fhir.r4.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.naming.OperationNotSupportedException;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.naming.OperationNotSupportedException;
-
-import net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.bundle.BundleContentHelper;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.searches.SearchNameEnum;
-import org.hl7.fhir.r4.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ca.uhn.fhir.rest.annotation.Create;
-import ca.uhn.fhir.rest.annotation.Delete;
-import ca.uhn.fhir.rest.annotation.IdParam;
-import ca.uhn.fhir.rest.annotation.Read;
-import ca.uhn.fhir.rest.annotation.RequiredParam;
-import ca.uhn.fhir.rest.annotation.ResourceParam;
-import ca.uhn.fhir.rest.annotation.Search;
-import ca.uhn.fhir.rest.annotation.Update;
-import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.fhir.rest.param.DateRangeParam;
-import ca.uhn.fhir.rest.param.TokenParam;
-import ca.uhn.fhir.rest.server.IResourceProvider;
-import net.fhirfactory.pegacorn.datasets.fhir.r4.operationaloutcome.OperationOutcomeGenerator;
-import net.fhirfactory.pegacorn.ladon.edge.answer.resourceproxies.common.LadonEdgeSynchronousCRUDResourceBase;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
-import net.fhirfactory.pegacorn.ladon.virtualdb.accessors.DocumentReferenceAccessor;
-import net.fhirfactory.pegacorn.ladon.virtualdb.accessors.common.AccessorBase;
-
 @ApplicationScoped
-public class DocumentReferenceProxy extends LadonEdgeSynchronousCRUDResourceBase implements IResourceProvider {
+public class DocumentReferenceProxy extends EdgeSynchronousCRUDResourceBase implements IResourceProvider {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentReferenceProxy.class);
 
     public DocumentReferenceProxy() {
@@ -80,7 +71,7 @@ public class DocumentReferenceProxy extends LadonEdgeSynchronousCRUDResourceBase
     private OperationOutcomeGenerator outcomeGenerator;
 
     @Override
-    protected AccessorBase specifyVirtualDBAccessor() {
+    protected ResourceAccessorInterfaceBase specifyActualResourceAccessor() {
         return (virtualDBAccessor);
     }
 
@@ -96,7 +87,7 @@ public class DocumentReferenceProxy extends LadonEdgeSynchronousCRUDResourceBase
     @Create()
     public MethodOutcome createDocumentReference(@ResourceParam DocumentReference theResource) {
         LOG.debug(".createPatient(): Entry, thePatient (Patient) --> {}", theResource);
-        VirtualDBMethodOutcome outcome = getVirtualDBAccessor().createResource(theResource);
+        TransactionMethodOutcome outcome = getActualResourceAccessor().createResource(theResource);
         return (outcome);
     }
 
@@ -115,7 +106,7 @@ public class DocumentReferenceProxy extends LadonEdgeSynchronousCRUDResourceBase
     @Read()
     public DocumentReference reviewDocumentReference(@IdParam IdType resourceId) {
         LOG.debug(".reviewDocumentReference(): Entry, resourceId (IdType) --> {}", resourceId);
-        VirtualDBMethodOutcome outcome = getResource(resourceId);
+        TransactionMethodOutcome outcome = getResource(resourceId);
         DocumentReference retrievedDocRef = (DocumentReference) outcome.getResource();
         LOG.debug(".reviewDocumentReference(): Exit, retrieved Document Reference (DocumentReference) --> {}", retrievedDocRef);
         return (retrievedDocRef);
@@ -124,7 +115,7 @@ public class DocumentReferenceProxy extends LadonEdgeSynchronousCRUDResourceBase
     @Update()
     public MethodOutcome updateDocumentReference(@ResourceParam DocumentReference docRefToUpdate) {
         LOG.debug(".readDocumentReference(): Entry, docRefToUpdate (DocumentReference) --> {}", docRefToUpdate);
-        VirtualDBMethodOutcome outcome = updateResource(docRefToUpdate);
+        TransactionMethodOutcome outcome = updateResource(docRefToUpdate);
         LOG.debug(".readDocumentReference(): Exit, outcome (VirtualDBMethodOutcome) --> {}", outcome);
         return (outcome);
     }
@@ -181,9 +172,9 @@ public class DocumentReferenceProxy extends LadonEdgeSynchronousCRUDResourceBase
                 (List<? extends Base>) null);
         argumentList.put(docRefDateProperty, theRange);
 
-        VirtualDBMethodOutcome outcome = getVirtualDBAccessor().searchUsingCriteria(ResourceType.DocumentReference, SearchNameEnum.DOCUMENT_REFERENCE_DATE_AND_TYPE, argumentList);
+        TransactionMethodOutcome outcome = getActualResourceAccessor().searchUsingCriteria(ResourceType.DocumentReference, SearchNameEnum.DOCUMENT_REFERENCE_DATE_AND_TYPE.getSearchName(), argumentList);
 
-        if (outcome.getStatusEnum() == VirtualDBActionStatusEnum.SEARCH_FINISHED) {
+        if (outcome.getStatusEnum() == TransactionStatusEnum.SEARCH_FINISHED) {
             Bundle searchOutcome = (Bundle) outcome.getResource();
             return (searchOutcome);
         } else {

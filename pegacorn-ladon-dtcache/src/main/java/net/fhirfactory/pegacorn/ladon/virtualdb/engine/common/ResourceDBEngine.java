@@ -21,12 +21,12 @@
  */
 package net.fhirfactory.pegacorn.ladon.virtualdb.engine.common;
 
-import net.fhirfactory.pegacorn.deployment.properties.LadonDefaultDeploymentProperties;
+
 import net.fhirfactory.pegacorn.ladon.mdr.conduit.controller.common.ResourceSoTConduitController;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.ResourceDBEngineInterface;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcomeFactory;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionStatusEnum;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcomeFactory;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.searches.SearchNameEnum;
 import net.fhirfactory.pegacorn.ladon.virtualdb.cache.common.VirtualDBIdTypeBasedCacheBase;
 import net.fhirfactory.pegacorn.ladon.virtualdb.persistence.common.PersistenceServiceBase;
@@ -35,8 +35,6 @@ import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.sql.Date;
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -44,10 +42,10 @@ import java.util.UUID;
 public abstract class ResourceDBEngine implements ResourceDBEngineInterface {
 
     @Inject
-    private VirtualDBMethodOutcomeFactory outcomeFactory;
+    private TransactionMethodOutcomeFactory outcomeFactory;
 
-    @Inject
-    private LadonDefaultDeploymentProperties ladonDefaultDeploymentProperties;
+//    @Inject
+//    private LadonDefaultDeploymentProperties ladonDefaultDeploymentProperties;
 
     abstract protected VirtualDBIdTypeBasedCacheBase specifyDBCache();
 
@@ -77,7 +75,7 @@ public abstract class ResourceDBEngine implements ResourceDBEngineInterface {
     protected ResourceType getResourceType(){return(specifyResourceType());}
 
     @Override
-    public VirtualDBMethodOutcome createResource(Resource resourceToCreate) {
+    public TransactionMethodOutcome createResource(Resource resourceToCreate) {
         getLogger().debug(".createResource(): Entry, resourceToCreate --> {}", resourceToCreate);
         IdType newId = null;
         if(!resourceToCreate.hasId()){
@@ -89,12 +87,12 @@ public abstract class ResourceDBEngine implements ResourceDBEngineInterface {
         } else {
             newId = resourceToCreate.getIdElement();
         }
-        VirtualDBMethodOutcome outcome = getSourceOfTruthAggregator().createResource(resourceToCreate);
-        if (outcome.getStatusEnum().equals(VirtualDBActionStatusEnum.CREATION_FINISH)) {
+        TransactionMethodOutcome outcome = getSourceOfTruthAggregator().createResource(resourceToCreate);
+        if (outcome.getStatusEnum().equals(TransactionStatusEnum.CREATION_FINISH)) {
             getLogger().trace(".createResource(): Resource successfully created in the MDR (Set), now adding it to the Cache & VirtualDB");
-            VirtualDBMethodOutcome virtualDBOutcome = getPersistenceService().standardCreateResource(resourceToCreate);
+            TransactionMethodOutcome virtualDBOutcome = getPersistenceService().standardCreateResource(resourceToCreate);
             resourceToCreate.setId(virtualDBOutcome.getId());
-            VirtualDBMethodOutcome cacheCreateOutcome = getDBCache().createResource(resourceToCreate);
+            TransactionMethodOutcome cacheCreateOutcome = getDBCache().createResource(resourceToCreate);
             if(!newId.equals(outcome.getResource().getIdElement())){
                 getLogger().error(".createResource(): Server Overwrote the Id! Intended Value --> {}, value from Server --> {}", newId, outcome.getId());
             }
@@ -124,7 +122,7 @@ public abstract class ResourceDBEngine implements ResourceDBEngineInterface {
      * returned object will retrieve the Resource in question if the retrieval was successful.
      */
     @Override
-    public VirtualDBMethodOutcome getResource(IdType id) {
+    public TransactionMethodOutcome getResource(IdType id) {
         getLogger().debug(".getResource(IdType): Entry, id --> {}", id);
         getLogger().trace(".getResource(IdType): Check to see if there is an entry in the cache");
 /*        VirtualDBMethodOutcome outcome = getDBCache().getResource(id);
@@ -156,31 +154,31 @@ public abstract class ResourceDBEngine implements ResourceDBEngineInterface {
             outcome = outcomeFactory.generateEmptyGetResponse(getResourceType(), id);
             return (outcome);
         } */
-        VirtualDBMethodOutcome outcome = outcomeFactory.generateEmptyGetResponse(getResourceType(), id);
+        TransactionMethodOutcome outcome = outcomeFactory.generateEmptyGetResponse(getResourceType(), id);
         return (outcome);
     }
 
     @Override
-    public VirtualDBMethodOutcome updateResource(Resource resourceToUpdate) {
-        VirtualDBMethodOutcome outcome = getSourceOfTruthAggregator().updateResource(resourceToUpdate);
-        if (outcome.getStatusEnum() == VirtualDBActionStatusEnum.UPDATE_FINISH) {
-            VirtualDBMethodOutcome cacheCreateOutcome = getDBCache().updateResource(resourceToUpdate);
+    public TransactionMethodOutcome updateResource(Resource resourceToUpdate) {
+        TransactionMethodOutcome outcome = getSourceOfTruthAggregator().updateResource(resourceToUpdate);
+        if (outcome.getStatusEnum() == TransactionStatusEnum.UPDATE_FINISH) {
+            TransactionMethodOutcome cacheCreateOutcome = getDBCache().updateResource(resourceToUpdate);
         }
         return (outcome);
     }
 
     @Override
-    public VirtualDBMethodOutcome deleteResource(Resource resourceToDelete) {
-        VirtualDBMethodOutcome outcome = getSourceOfTruthAggregator().deleteResource(resourceToDelete);
-        VirtualDBMethodOutcome cacheCreateOutcome = getDBCache().deleteResource(resourceToDelete);
+    public TransactionMethodOutcome deleteResource(Resource resourceToDelete) {
+        TransactionMethodOutcome outcome = getSourceOfTruthAggregator().deleteResource(resourceToDelete);
+        TransactionMethodOutcome cacheCreateOutcome = getDBCache().deleteResource(resourceToDelete);
         return (outcome);
     }
 
-    private void updateCache(VirtualDBMethodOutcome outcome){
+    private void updateCache(TransactionMethodOutcome outcome){
         if(outcome == null){
             return;
         }
-        if(outcome.getStatusEnum() != VirtualDBActionStatusEnum.SEARCH_FINISHED) {
+        if(outcome.getStatusEnum() != TransactionStatusEnum.SEARCH_FINISHED) {
             return;
         }
         Bundle outcomeBundle = (Bundle)outcome.getResource();
@@ -191,7 +189,7 @@ public abstract class ResourceDBEngine implements ResourceDBEngineInterface {
             return;
         }
         for(Bundle.BundleEntryComponent entry: outcomeBundle.getEntry()){
-            VirtualDBMethodOutcome cacheCreateOutcome = getDBCache().syncResource(entry.getResource());
+            TransactionMethodOutcome cacheCreateOutcome = getDBCache().syncResource(entry.getResource());
         }
     }
 
@@ -201,10 +199,10 @@ public abstract class ResourceDBEngine implements ResourceDBEngineInterface {
     //
     //
 
-    public VirtualDBMethodOutcome findResourceViaIdentifier(Identifier identifier) {
+    public TransactionMethodOutcome findResourceViaIdentifier(Identifier identifier) {
         getLogger().debug(".findResourceViaIdentifier(): Entry");
-        VirtualDBMethodOutcome outcome = getDBCache().getResource(identifier);
-        if (outcome.getStatusEnum() == VirtualDBActionStatusEnum.REVIEW_RESOURCE_NOT_IN_CACHE) {
+        TransactionMethodOutcome outcome = getDBCache().getResource(identifier);
+        if (outcome.getStatusEnum() == TransactionStatusEnum.REVIEW_RESOURCE_NOT_IN_CACHE) {
             getLogger().trace(".getResource(): Resource not in Cache, going to Sources-of-Truth");
             outcome = getSourceOfTruthAggregator().reviewResource(identifier);
         }
@@ -213,9 +211,9 @@ public abstract class ResourceDBEngine implements ResourceDBEngineInterface {
     }
 
     @Override
-    public VirtualDBMethodOutcome getResourcesViaSearchCriteria(ResourceType resourceType, SearchNameEnum searchName, Map<Property, Serializable> parameterSet) {
+    public TransactionMethodOutcome getResourcesViaSearchCriteria(ResourceType resourceType, SearchNameEnum searchName, Map<Property, Serializable> parameterSet) {
         getLogger().debug("ResourceDBEngine::getResourcesViaSearchCriteria(): Entry, ResourceType --> {}, Search Name --> {}", resourceType.toString(), searchName.getSearchName());
-        VirtualDBMethodOutcome outcome = getSourceOfTruthAggregator().getResourcesViaSearchCriteria(resourceType, searchName, parameterSet);
+        TransactionMethodOutcome outcome = getSourceOfTruthAggregator().getResourcesViaSearchCriteria(resourceType, searchName, parameterSet);
         updateCache(outcome);
         getLogger().debug("ResourceDBEngine::getResourcesViaSearchCriteria(): Exit");
         return(outcome);

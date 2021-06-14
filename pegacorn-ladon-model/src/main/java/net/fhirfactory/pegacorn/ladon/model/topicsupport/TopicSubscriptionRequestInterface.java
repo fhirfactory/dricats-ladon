@@ -21,11 +21,11 @@
  */
 package net.fhirfactory.pegacorn.ladon.model.topicsupport;
 
+import net.fhirfactory.pegacorn.common.model.topicid.DataParcelToken;
+
 import java.util.List;
 
-import net.fhirfactory.pegacorn.petasos.model.topics.TopicToken;
-
 public interface TopicSubscriptionRequestInterface {
-	public void requestSubscrption(List<TopicToken> topicList);
+	public void requestSubscrption(List<DataParcelToken> topicList);
 
 }

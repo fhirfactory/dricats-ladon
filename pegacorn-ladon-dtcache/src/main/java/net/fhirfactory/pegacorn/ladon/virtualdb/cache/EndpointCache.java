@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.pegacorn.ladon.virtualdb.cache;
 
-import net.fhirfactory.pegacorn.deployment.properties.LadonDefaultDeploymentProperties;
+import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.ladon.nexus.im.LadonNexusProperties;
 import net.fhirfactory.pegacorn.ladon.virtualdb.cache.common.VirtualDBIdTypeBasedCacheBase;
 import org.hl7.fhir.r4.model.Endpoint;
 import org.hl7.fhir.r4.model.Identifier;
@@ -37,8 +37,9 @@ import java.util.List;
 @ApplicationScoped
 public class EndpointCache extends VirtualDBIdTypeBasedCacheBase {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointCache.class);
+
     @Inject
-    LadonDefaultDeploymentProperties ladonProperties;
+    private LadonNexusProperties ladonProperties;
 
     public EndpointCache(){
         super();

@@ -5,7 +5,7 @@
     <servlet>
         <servlet-name>LadonEdgeAnswerServlet</servlet-name>
         <display-name>Ladon FHIR Servlet</display-name>
-        <servlet-class>net.fhirfactory.pegacorn.ladon.edge.answer.servlet.EdgeAnswerServlet</servlet-class>
+        <servlet-class>net.fhirfactory.pegacorn.platform.edge.answer.servlet.EdgeAnswerServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>

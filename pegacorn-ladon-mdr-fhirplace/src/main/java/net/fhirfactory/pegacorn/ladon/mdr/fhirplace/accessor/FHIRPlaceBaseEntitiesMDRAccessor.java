@@ -21,46 +21,18 @@
  */
 package net.fhirfactory.pegacorn.ladon.mdr.fhirplace.accessor;
 
-import net.fhirfactory.pegacorn.deployment.names.PegacornFHIRPlaceMDRComponentNames;
-import net.fhirfactory.pegacorn.platform.restfulapi.PegacornInternalFHIRClientServices;
+
+import net.fhirfactory.pegacorn.ladon.mdr.fhirplace.accessor.common.FHIRPlaceMDRDefaultAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 @ApplicationScoped
-public class FHIRPlaceBaseEntitiesMDRAccessor extends PegacornInternalFHIRClientServices {
+public class FHIRPlaceBaseEntitiesMDRAccessor extends FHIRPlaceMDRDefaultAccessor {
     private static final Logger LOG = LoggerFactory.getLogger(FHIRPlaceBaseEntitiesMDRAccessor.class);
 
     @Override
     protected Logger getLogger(){return(LOG);}
 
-    @Inject
-    private PegacornFHIRPlaceMDRComponentNames pegacornMDRComponentNames;
-
-    @Override
-    protected String specifyFHIRServerService() {
-        return (pegacornMDRComponentNames.getBaseEntitiesPegacornMDRService());
-    }
-
-    @Override
-    protected String specifyFHIRServerProcessingPlant() {
-        return (pegacornMDRComponentNames.getBaseEntitiesPegacornMDRProcessingPlant());
-    }
-
-    @Override
-    protected String specifyFHIRServerSubsystemName() {
-        return (pegacornMDRComponentNames.getBaseEntitiesPegacornMDRSubsystem());
-    }
-
-    @Override
-    protected String specifyFHIRServerSubsystemVersion() {
-        return (pegacornMDRComponentNames.getBaseEntitiesPegacornMDRSubsystemVersion());
-    }
-
-    @Override
-    protected String specifyFHIRServerServerEndpointName() {
-        return (pegacornMDRComponentNames.getBaseEntitiesPegacornMDREndpointFhirApi());
-    }
 }

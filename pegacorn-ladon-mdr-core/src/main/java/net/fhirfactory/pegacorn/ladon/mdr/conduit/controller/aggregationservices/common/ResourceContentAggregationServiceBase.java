@@ -1,13 +1,18 @@
 package net.fhirfactory.pegacorn.ladon.mdr.conduit.controller.aggregationservices.common;
 
-import net.fhirfactory.pegacorn.datasets.fhir.r4.codesystems.PegacornIdentifierCodeEnum;
-import net.fhirfactory.pegacorn.datasets.fhir.r4.codesystems.PegacornIdentifierCodeSystemFactory;
-import net.fhirfactory.pegacorn.datasets.fhir.r4.common.SourceOfTruthRIDIdentifierBuilder;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.businesskey.VirtualDBKeyManagement;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.*;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
+
+import net.fhirfactory.pegacorn.internals.fhir.r4.codesystems.PegacornIdentifierCodeEnum;
+import net.fhirfactory.pegacorn.internals.fhir.r4.codesystems.PegacornIdentifierCodeSystemFactory;
+import net.fhirfactory.pegacorn.internals.fhir.r4.common.SourceOfTruthRIDIdentifierBuilder;
+import net.fhirfactory.pegacorn.internals.fhir.r4.resources.identifier.PegacornIdentifierDataTypeHelpers;
+import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponse;
+import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitSearchResponseElement;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
 import net.fhirfactory.pegacorn.util.FHIRContextUtility;
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
@@ -23,7 +28,7 @@ public abstract class ResourceContentAggregationServiceBase {
     protected abstract ResourceType getResourceType();
 
     @Inject
-    private VirtualDBKeyManagement VirtualDBKeyHelpers;
+    private PegacornIdentifierDataTypeHelpers VirtualDBKeyHelpers;
 
     @Inject
     private PegacornIdentifierCodeSystemFactory pegacornIdentifierCodeSystemFactory;
@@ -38,7 +43,7 @@ public abstract class ResourceContentAggregationServiceBase {
         return(fhirContextUtility);
     }
 
-    protected VirtualDBKeyManagement getIdentifierPicker(){return(VirtualDBKeyHelpers);}
+    protected PegacornIdentifierDataTypeHelpers getIdentifierPicker(){return(VirtualDBKeyHelpers);}
 
     public PegacornIdentifierCodeSystemFactory getPegacornIdentifierCodeSystemFactory() {
         return pegacornIdentifierCodeSystemFactory;
@@ -51,23 +56,23 @@ public abstract class ResourceContentAggregationServiceBase {
     //
     // Create Aggregation Methods
     //
-    public abstract VirtualDBMethodOutcome aggregateCreateResponseSet(List<ResourceSoTConduitActionResponse> responseSet);
+    public abstract TransactionMethodOutcome aggregateCreateResponseSet(List<ResourceSoTConduitActionResponse> responseSet);
     //
     // Review / Get Aggregation Methods
     //
-    public abstract VirtualDBMethodOutcome aggregateGetResponseSet(List<ResourceSoTConduitActionResponse> responseSet);
+    public abstract TransactionMethodOutcome aggregateGetResponseSet(List<ResourceSoTConduitActionResponse> responseSet);
     //
     // Update Aggregation Methods
     //
-    public abstract VirtualDBMethodOutcome aggregateUpdateResponseSet(List<ResourceSoTConduitActionResponse> responseSet);
+    public abstract TransactionMethodOutcome aggregateUpdateResponseSet(List<ResourceSoTConduitActionResponse> responseSet);
     //
     // Delete Aggregation Methods
     //
-    public abstract VirtualDBMethodOutcome aggregateDeleteResponseSet(List<ResourceSoTConduitActionResponse> responseSet);
+    public abstract TransactionMethodOutcome aggregateDeleteResponseSet(List<ResourceSoTConduitActionResponse> responseSet);
     //
     // Search Result Aggregation
     //
-    public abstract VirtualDBMethodOutcome aggregateSearchResultSet(List<ResourceSoTConduitSearchResponseElement> responseSet);
+    public abstract TransactionMethodOutcome aggregateSearchResultSet(List<ResourceSoTConduitSearchResponseElement> responseSet);
 
     protected void mapIdToIdentifier(ResourceSoTConduitActionResponse actionResponse){
         List<Identifier> identifierList = getIdentifiers(actionResponse);

@@ -26,15 +26,15 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.bundle.BundleContentHelper;
-import net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.identifier.SearchSupportHelper;
-import net.fhirfactory.pegacorn.datasets.fhir.r4.operationaloutcome.OperationOutcomeGenerator;
-import net.fhirfactory.pegacorn.ladon.edge.answer.resourceproxies.common.LadonEdgeSynchronousCRUDResourceBase;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionStatusEnum;
+import net.fhirfactory.pegacorn.internals.fhir.r4.operationaloutcome.OperationOutcomeGenerator;
+import net.fhirfactory.pegacorn.internals.fhir.r4.resources.bundle.BundleContentHelper;
+import net.fhirfactory.pegacorn.internals.fhir.r4.resources.identifier.SearchSupportHelper;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.searches.SearchNameEnum;
 import net.fhirfactory.pegacorn.ladon.virtualdb.accessors.PatientAccessor;
-import net.fhirfactory.pegacorn.ladon.virtualdb.accessors.common.AccessorBase;
+import net.fhirfactory.pegacorn.platform.edge.answer.resourceproxies.common.EdgeSynchronousCRUDResourceBase;
+import net.fhirfactory.pegacorn.platform.edge.model.common.ResourceAccessorInterfaceBase;
 import org.hl7.fhir.r4.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @ApplicationScoped
-public class PatientProxy extends LadonEdgeSynchronousCRUDResourceBase implements IResourceProvider {
+public class PatientProxy extends EdgeSynchronousCRUDResourceBase implements IResourceProvider {
     private static final Logger LOG = LoggerFactory.getLogger(PatientProxy.class);
 
     public PatientProxy() {
@@ -79,7 +79,7 @@ public class PatientProxy extends LadonEdgeSynchronousCRUDResourceBase implement
     }
 
     @Override
-    protected AccessorBase specifyVirtualDBAccessor() {
+    protected ResourceAccessorInterfaceBase specifyActualResourceAccessor() {
         return (patientAccessor);
     }
 
@@ -91,7 +91,7 @@ public class PatientProxy extends LadonEdgeSynchronousCRUDResourceBase implement
     public MethodOutcome createPatient(@ResourceParam Patient thePatient) {
         LOG.debug(".createPatient(): Entry, thePatient (Patient) --> {}", thePatient);
         // validateResource(thePatient);
-        VirtualDBMethodOutcome resourceActionOutcome = getVirtualDBAccessor().createResource(thePatient);
+        TransactionMethodOutcome resourceActionOutcome = getActualResourceAccessor().createResource(thePatient);
         return (resourceActionOutcome);
     }
 
@@ -111,7 +111,7 @@ public class PatientProxy extends LadonEdgeSynchronousCRUDResourceBase implement
     @Read()
     public Patient readPatient(@IdParam IdType patientID) {
         LOG.debug(".readPatient(): Entry, patientID (IdType) --> {}", patientID);
-        VirtualDBMethodOutcome outcome = getVirtualDBAccessor().getResource(patientID);
+        TransactionMethodOutcome outcome = getActualResourceAccessor().getResource(patientID);
         Patient retrievedPatient = (Patient) outcome.getResource();
         LOG.debug(".readPatient(): Exit, retrieved Patient (Patient) --> {}", retrievedPatient);
         return (retrievedPatient);
@@ -124,7 +124,7 @@ public class PatientProxy extends LadonEdgeSynchronousCRUDResourceBase implement
     @Update()
     public MethodOutcome updatePatient(@ResourceParam Patient thePatient) {
         LOG.debug(".createPatient(): Entry, thePatient (Patient) --> {}", thePatient);
-        VirtualDBMethodOutcome resourceActionOutcome = getVirtualDBAccessor().updateResource(thePatient);
+        TransactionMethodOutcome resourceActionOutcome = getActualResourceAccessor().updateResource(thePatient);
         return (resourceActionOutcome);
     }
 
@@ -180,9 +180,9 @@ public class PatientProxy extends LadonEdgeSynchronousCRUDResourceBase implement
                 (List<? extends Base>) null);
         argumentList.put(extensionProperty, queryString);
 
-        VirtualDBMethodOutcome outcome = getVirtualDBAccessor().searchUsingCriteria(ResourceType.Patient, SearchNameEnum.PATIENT_QRY_A19, argumentList);
+        TransactionMethodOutcome outcome = getActualResourceAccessor().searchUsingCriteria(ResourceType.Patient, SearchNameEnum.PATIENT_QRY_A19.getSearchName(), argumentList);
 
-        if (outcome.getStatusEnum() == VirtualDBActionStatusEnum.SEARCH_FINISHED) {
+        if (outcome.getStatusEnum() == TransactionStatusEnum.SEARCH_FINISHED) {
             Bundle searchOutcome = (Bundle) outcome.getResource();
             return (searchOutcome);
         } else {

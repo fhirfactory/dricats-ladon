@@ -23,9 +23,9 @@ package net.fhirfactory.pegacorn.ladon.mdr.conduit.controller.aggregationservice
 
 import net.fhirfactory.pegacorn.ladon.mdr.conduit.controller.aggregationservices.common.ResourceContentAggregationServiceBase;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.*;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionTypeEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionStatusEnum;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionTypeEnum;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
 import org.hl7.fhir.r4.model.*;
 
 import java.time.Instant;
@@ -38,29 +38,29 @@ public abstract class DefaultResourceContentAggregationServiceBase extends Resou
     // Shared Methods
     //
 
-    protected VirtualDBMethodOutcome generateBadAttributeOutcome(String method, VirtualDBActionTypeEnum action, String text){
+    protected TransactionMethodOutcome generateBadAttributeOutcome(String method, TransactionTypeEnum action, String text){
         getLogger().debug(".generateBadAttributeOutcome(): Entry, method --> {}, action --> {}, text --> {}", method, action, text);
-        VirtualDBMethodOutcome vdbOutcome = new VirtualDBMethodOutcome();
+        TransactionMethodOutcome vdbOutcome = new TransactionMethodOutcome();
         vdbOutcome.setCreated(false);
         vdbOutcome.setCausalAction(action);
         switch(action){
             case CREATE:
-                vdbOutcome.setStatusEnum(VirtualDBActionStatusEnum.CREATION_FAILURE);
+                vdbOutcome.setStatusEnum(TransactionStatusEnum.CREATION_FAILURE);
                 break;
             case REVIEW:
-                vdbOutcome.setStatusEnum(VirtualDBActionStatusEnum.REVIEW_FAILURE);
+                vdbOutcome.setStatusEnum(TransactionStatusEnum.REVIEW_FAILURE);
                 break;
             case UPDATE:
-                vdbOutcome.setStatusEnum(VirtualDBActionStatusEnum.UPDATE_FAILURE);
+                vdbOutcome.setStatusEnum(TransactionStatusEnum.UPDATE_FAILURE);
                 break;
             case DELETE:
-                vdbOutcome.setStatusEnum(VirtualDBActionStatusEnum.DELETE_FAILURE);
+                vdbOutcome.setStatusEnum(TransactionStatusEnum.DELETE_FAILURE);
                 break;
             case SEARCH:
-                vdbOutcome.setStatusEnum(VirtualDBActionStatusEnum.SEARCH_FAILURE);
+                vdbOutcome.setStatusEnum(TransactionStatusEnum.SEARCH_FAILURE);
                 break;
             case SYNC:
-                vdbOutcome.setStatusEnum(VirtualDBActionStatusEnum.SYNC_FAILURE);
+                vdbOutcome.setStatusEnum(TransactionStatusEnum.SYNC_FAILURE);
         }
         CodeableConcept details = new CodeableConcept();
         Coding detailsCoding = new Coding();
@@ -81,12 +81,12 @@ public abstract class DefaultResourceContentAggregationServiceBase extends Resou
         return(vdbOutcome);
     }
 
-    protected VirtualDBMethodOutcome createFailedSearchOutcome(String conduitName, String failedMethodName){
+    protected TransactionMethodOutcome createFailedSearchOutcome(String conduitName, String failedMethodName){
         getLogger().debug(".createFailedSearchOutcome(): Entry, conduitName --> {}, failedMethodName -->{}", conduitName, failedMethodName);
-        VirtualDBMethodOutcome failedSearchOutcome = new VirtualDBMethodOutcome();
+        TransactionMethodOutcome failedSearchOutcome = new TransactionMethodOutcome();
         failedSearchOutcome.setCreated(false);
-        failedSearchOutcome.setCausalAction(VirtualDBActionTypeEnum.SEARCH);
-        failedSearchOutcome.setStatusEnum(VirtualDBActionStatusEnum.SEARCH_FAILURE);
+        failedSearchOutcome.setCausalAction(TransactionTypeEnum.SEARCH);
+        failedSearchOutcome.setStatusEnum(TransactionStatusEnum.SEARCH_FAILURE);
         CodeableConcept details = new CodeableConcept();
         Coding detailsCoding = new Coding();
         detailsCoding.setSystem("https://www.hl7.org/fhir/codesystem-operation-outcome.html");
@@ -107,7 +107,7 @@ public abstract class DefaultResourceContentAggregationServiceBase extends Resou
         return(failedSearchOutcome);
     }
 
-    protected boolean successfulCompletion(VirtualDBActionStatusEnum status){
+    protected boolean successfulCompletion(TransactionStatusEnum status){
         getLogger().debug(".successfulCompletion(): Entry, status --> {}", status);
         switch(status){
             case CREATION_FINISH:

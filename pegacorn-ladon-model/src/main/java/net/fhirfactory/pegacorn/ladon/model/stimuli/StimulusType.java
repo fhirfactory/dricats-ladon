@@ -1,10 +1,10 @@
 package net.fhirfactory.pegacorn.ladon.model.stimuli;
 
-import net.fhirfactory.pegacorn.petasos.model.topics.TopicToken;
+import net.fhirfactory.pegacorn.common.model.topicid.DataParcelToken;
 
-public class StimulusType extends TopicToken {
+public class StimulusType extends DataParcelToken {
 
-    public StimulusType(TopicToken topic){
+    public StimulusType(DataParcelToken topic){
         super(topic);
     }
 
@@ -12,9 +12,9 @@ public class StimulusType extends TopicToken {
         super();
     }
 
-    public TopicToken getAsTopicToken(){
-        TopicToken asToken = new TopicToken();
-        asToken.setIdentifier(this.getIdentifier());
+    public DataParcelToken getAsTopicToken(){
+        DataParcelToken asToken = new DataParcelToken();
+        asToken.setToken(this.getToken());
         asToken.setVersion(this.getVersion());
         return(asToken);
     }

@@ -25,11 +25,11 @@ import ca.uhn.fhir.rest.annotation.*;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
-import net.fhirfactory.pegacorn.datasets.fhir.r4.operationaloutcome.OperationOutcomeGenerator;
-import net.fhirfactory.pegacorn.ladon.edge.answer.resourceproxies.common.LadonEdgeSynchronousCRUDResourceBase;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
+import net.fhirfactory.pegacorn.internals.fhir.r4.operationaloutcome.OperationOutcomeGenerator;
 import net.fhirfactory.pegacorn.ladon.virtualdb.accessors.TaskAccessor;
-import net.fhirfactory.pegacorn.ladon.virtualdb.accessors.common.AccessorBase;
+import net.fhirfactory.pegacorn.platform.edge.answer.resourceproxies.common.EdgeSynchronousCRUDResourceBase;
+import net.fhirfactory.pegacorn.platform.edge.model.common.ResourceAccessorInterfaceBase;
 import org.hl7.fhir.r4.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ import javax.inject.Inject;
 import javax.naming.OperationNotSupportedException;
 
 @ApplicationScoped
-public class TaskProxy extends LadonEdgeSynchronousCRUDResourceBase implements IResourceProvider {
+public class TaskProxy extends EdgeSynchronousCRUDResourceBase implements IResourceProvider {
     private static final Logger LOG = LoggerFactory.getLogger(TaskProxy.class);
 
     public TaskProxy() {
@@ -59,7 +59,7 @@ public class TaskProxy extends LadonEdgeSynchronousCRUDResourceBase implements I
     private OperationOutcomeGenerator outcomeGenerator;
 
     @Override
-    protected AccessorBase specifyVirtualDBAccessor() {
+    protected ResourceAccessorInterfaceBase specifyActualResourceAccessor() {
         return (virtualDBAccessor);
     }
 
@@ -75,7 +75,7 @@ public class TaskProxy extends LadonEdgeSynchronousCRUDResourceBase implements I
     @Create()
     public MethodOutcome createTask(@ResourceParam Task theResource) {
         LOG.debug(".createPatient(): Entry, thePatient (Patient) --> {}", theResource);
-        VirtualDBMethodOutcome outcome = getVirtualDBAccessor().createResource(theResource);
+        TransactionMethodOutcome outcome = getActualResourceAccessor().createResource(theResource);
         return (outcome);
     }
 
@@ -94,7 +94,7 @@ public class TaskProxy extends LadonEdgeSynchronousCRUDResourceBase implements I
     @Read()
     public Task reviewTask(@IdParam IdType resourceId) {
         LOG.debug(".reviewTask(): Entry, resourceId (IdType) --> {}", resourceId);
-        VirtualDBMethodOutcome outcome = getResource(resourceId);
+        TransactionMethodOutcome outcome = getResource(resourceId);
         Task retrievedDocRef = (Task) outcome.getResource();
         LOG.debug(".reviewTask(): Exit, retrieved Document Reference (Task) --> {}", retrievedDocRef);
         return (retrievedDocRef);
@@ -113,7 +113,7 @@ public class TaskProxy extends LadonEdgeSynchronousCRUDResourceBase implements I
     @Update()
     public MethodOutcome updateTask(@ResourceParam Task resourceToUpdate) {
         LOG.debug(".readTask(): Entry, docRefToUpdate (Task) --> {}", resourceToUpdate);
-        VirtualDBMethodOutcome outcome = updateResource(resourceToUpdate);
+        TransactionMethodOutcome outcome = updateResource(resourceToUpdate);
         LOG.debug(".readTask(): Exit, outcome (VirtualDBMethodOutcome) --> {}", outcome);
         return (outcome);
     }

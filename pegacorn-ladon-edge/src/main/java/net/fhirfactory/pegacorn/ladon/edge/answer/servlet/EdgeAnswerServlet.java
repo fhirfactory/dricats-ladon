@@ -26,16 +26,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import net.fhirfactory.pegacorn.deployment.properties.SystemWideProperties;
+
+import net.fhirfactory.pegacorn.internals.PegacornReferenceProperties;
 import net.fhirfactory.pegacorn.ladon.edge.answer.resourceproxies.*;
-import net.fhirfactory.pegacorn.platform.edge.receive.common.ApiKeyValidatorInterceptor;
 import net.fhirfactory.pegacorn.util.FHIRContextUtility;
 
 import org.slf4j.Logger;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
-import ca.uhn.fhir.narrative.INarrativeGenerator;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
@@ -46,7 +44,7 @@ public abstract class EdgeAnswerServlet extends RestfulServer {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    SystemWideProperties systemWideProperties;
+    PegacornReferenceProperties systemWideProperties;
 
     @Inject
     protected CareTeamProxy careTeamProxy;

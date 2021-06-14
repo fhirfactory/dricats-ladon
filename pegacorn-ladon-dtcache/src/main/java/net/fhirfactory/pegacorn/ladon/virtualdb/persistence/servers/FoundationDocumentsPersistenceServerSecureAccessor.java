@@ -21,46 +21,17 @@
  */
 package net.fhirfactory.pegacorn.ladon.virtualdb.persistence.servers;
 
-import net.fhirfactory.pegacorn.deployment.names.PegacornLadonVirtualDBPersistenceComponentNames;
-import net.fhirfactory.pegacorn.platform.restfulapi.PegacornInternalFHIRClientServices;
+import net.fhirfactory.pegacorn.ladon.virtualdb.persistence.servers.common.PersistenceServerSecureAccessorBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 @ApplicationScoped
-public class FoundationDocumentsPersistenceServerSecureAccessor extends PegacornInternalFHIRClientServices {
+public class FoundationDocumentsPersistenceServerSecureAccessor extends PersistenceServerSecureAccessorBase {
     private static final Logger LOG = LoggerFactory.getLogger(FoundationDocumentsPersistenceServerSecureAccessor.class);
 
     @Override
     protected Logger getLogger(){return(LOG);}
 
-    @Inject
-    private PegacornLadonVirtualDBPersistenceComponentNames virtualDBPersistenceNames;
-
-    @Override
-    protected String specifyFHIRServerService() {
-        return (virtualDBPersistenceNames.getFoundationDocumentsVirtualDBPersistenceService());
-    }
-
-    @Override
-    protected String specifyFHIRServerProcessingPlant() {
-        return (virtualDBPersistenceNames.getFoundationDocumentsVirtualDBPersistenceProcessingPlant());
-    }
-
-    @Override
-    protected String specifyFHIRServerSubsystemName() {
-        return (virtualDBPersistenceNames.getFoundationDocumentsVirtualDBPersistenceSubsystem());
-    }
-
-    @Override
-    protected String specifyFHIRServerSubsystemVersion() {
-        return (virtualDBPersistenceNames.getFoundationDocumentsVirtualDBPersistenceSubsystemVersion());
-    }
-
-    @Override
-    protected String specifyFHIRServerServerEndpointName() {
-        return (virtualDBPersistenceNames.getFoundationDocumentsVirtualDBPersistenceEndpointFhirApi());
-    }
 }

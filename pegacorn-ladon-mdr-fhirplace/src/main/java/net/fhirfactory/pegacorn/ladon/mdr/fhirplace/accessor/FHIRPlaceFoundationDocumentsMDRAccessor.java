@@ -22,20 +22,18 @@
 package net.fhirfactory.pegacorn.ladon.mdr.fhirplace.accessor;
 
 import ca.uhn.fhir.parser.IParser;
-import net.fhirfactory.pegacorn.deployment.names.PegacornFHIRPlaceMDRComponentNames;
-import net.fhirfactory.pegacorn.platform.restfulapi.PegacornInternalFHIRClientServices;
+import net.fhirfactory.pegacorn.ladon.mdr.fhirplace.accessor.common.FHIRPlaceMDRDefaultAccessor;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @ApplicationScoped
-public class FHIRPlaceFoundationDocumentsMDRAccessor extends PegacornInternalFHIRClientServices {
+public class FHIRPlaceFoundationDocumentsMDRAccessor extends FHIRPlaceMDRDefaultAccessor {
     private static final Logger LOG = LoggerFactory.getLogger(FHIRPlaceFoundationDocumentsMDRAccessor.class);
 
     public FHIRPlaceFoundationDocumentsMDRAccessor(){
@@ -44,34 +42,6 @@ public class FHIRPlaceFoundationDocumentsMDRAccessor extends PegacornInternalFHI
 
     @Override
     protected Logger getLogger(){return(LOG);}
-
-    @Inject
-    private PegacornFHIRPlaceMDRComponentNames pegacornMDRComponentNames;
-
-    @Override
-    protected String specifyFHIRServerService() {
-        return (pegacornMDRComponentNames.getFoundationDocumentsPegacornMDRService());
-    }
-
-    @Override
-    protected String specifyFHIRServerProcessingPlant() {
-        return (pegacornMDRComponentNames.getFoundationDocumentsPegacornMDRProcessingPlant());
-    }
-
-    @Override
-    protected String specifyFHIRServerSubsystemName() {
-        return (pegacornMDRComponentNames.getFoundationDocumentsPegacornMDRSubsystem());
-    }
-
-    @Override
-    protected String specifyFHIRServerSubsystemVersion() {
-        return (pegacornMDRComponentNames.getFoundationDocumentsPegacornMDRSubsystemVersion());
-    }
-
-    @Override
-    protected String specifyFHIRServerServerEndpointName() {
-        return (pegacornMDRComponentNames.getFoundationDocumentsPegacornMDREndpointFhirApi());
-    }
 
     @Override
     public Resource findResourceByIdentifier(String resourceType, String identifierSystem, String identifierCode, String identifierValue){

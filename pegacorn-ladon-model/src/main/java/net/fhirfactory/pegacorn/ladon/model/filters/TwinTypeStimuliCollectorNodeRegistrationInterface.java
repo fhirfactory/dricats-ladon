@@ -21,8 +21,8 @@
  */
 package net.fhirfactory.pegacorn.ladon.model.filters;
 
-import net.fhirfactory.pegacorn.petasos.model.topology.NodeElement;
+import net.fhirfactory.pegacorn.deployment.topology.model.common.TopologyNode;
 
 public interface TwinTypeStimuliCollectorNodeRegistrationInterface {
-	public void registerCollectorNodeForTwinType(NodeElement node);
+	public void registerCollectorNodeForTwinType(TopologyNode node);
 }

@@ -22,20 +22,21 @@
 package net.fhirfactory.pegacorn.ladon.virtualdb.accessors;
 
 import ca.uhn.fhir.parser.IParser;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
 import net.fhirfactory.pegacorn.ladon.virtualdb.accessors.common.AccessorBase;
 import net.fhirfactory.pegacorn.ladon.virtualdb.engine.DocumentReferenceDBEngine;
 import net.fhirfactory.pegacorn.ladon.virtualdb.engine.common.ResourceDBEngine;
 import net.fhirfactory.pegacorn.util.FHIRContextUtility;
-import org.hl7.fhir.r4.model.DocumentReference;
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @ApplicationScoped
 public class DocumentReferenceAccessor extends AccessorBase {
@@ -99,5 +100,20 @@ public class DocumentReferenceAccessor extends AccessorBase {
     @Override
     protected Logger getLogger() {
         return (LOG);
+    }
+
+    @Override
+    public boolean supportsSearch(String searchName, Map<Property, Serializable> parameterSet) {
+        return false;
+    }
+
+    @Override
+    public TransactionMethodOutcome searchUsingCriteria(ResourceType resourceType, String searchName, Map<Property, Serializable> parameterSet) {
+        return null;
+    }
+
+    @Override
+    public TransactionMethodOutcome searchUsingIdentifier(Identifier identifier) {
+        return null;
     }
 }

@@ -21,22 +21,19 @@
  */
 package net.fhirfactory.pegacorn.ladon.virtualdb.persistence.common;
 
-import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.bundle.BundleContentHelper;
-import net.fhirfactory.pegacorn.deployment.names.PegacornLadonVirtualDBPersistenceComponentNames;
-import net.fhirfactory.pegacorn.deployment.topology.manager.DeploymentTopologyIM;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponse;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionTypeEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcomeFactory;
-import net.fhirfactory.pegacorn.ladon.processingplant.LadonProcessingPlant;
+import net.fhirfactory.pegacorn.components.interfaces.topology.PegacornTopologyFactoryInterface;
+import net.fhirfactory.pegacorn.components.interfaces.topology.ProcessingPlantInterface;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionStatusEnum;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionTypeEnum;
+import net.fhirfactory.pegacorn.deployment.topology.manager.TopologyIM;
+import net.fhirfactory.pegacorn.deployment.topology.model.nodes.WorkshopTopologyNode;
+import net.fhirfactory.pegacorn.internals.fhir.r4.resources.bundle.BundleContentHelper;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcomeFactory;
+import net.fhirfactory.pegacorn.ladon.virtualdb.workshop.VirtualDBWorkshop;
 import net.fhirfactory.pegacorn.petasos.core.sta.wup.GenericSTAClientWUPTemplate;
-import net.fhirfactory.pegacorn.petasos.model.itops.PegacornFunctionStatusEnum;
-import net.fhirfactory.pegacorn.petasos.model.processingplant.ProcessingPlantServicesInterface;
-import net.fhirfactory.pegacorn.platform.restfulapi.PegacornInternalFHIRClientServices;
+import net.fhirfactory.pegacorn.platform.edge.ask.InternalFHIRClientServices;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.*;
 import org.slf4j.Logger;
@@ -46,30 +43,40 @@ import javax.inject.Inject;
 public abstract class PersistenceServiceBase extends GenericSTAClientWUPTemplate {
 
     @Inject
-    LadonProcessingPlant ladonProcessingPlant;
-
-    @Inject
-    private DeploymentTopologyIM deploymentTopologyIM;
+    private TopologyIM deploymentTopologyIM;
 
     @Inject
     BundleContentHelper bundleHelper;
 
     @Inject
-    private PegacornLadonVirtualDBPersistenceComponentNames virtualDBPersistenceNames;
+    private ProcessingPlantInterface processingPlant;
 
     @Inject
-    private VirtualDBMethodOutcomeFactory virtualDBMethodOutcomeFactory;
+    private VirtualDBWorkshop workshop;
+
+    @Inject
+    private TransactionMethodOutcomeFactory virtualDBMethodOutcomeFactory;
 
     public PersistenceServiceBase() {
         super();
     }
 
+    @Override
+    protected WorkshopTopologyNode specifyWorkshop() {
+        return (workshop.getWorkshopNode());
+    }
+
+    @Override
+    protected PegacornTopologyFactoryInterface specifyTopologyFactory() {
+        return (processingPlant.getTopologyFactory());
+    }
+
     abstract protected String specifyPersistenceServiceName();
     abstract protected String specifyPersistenceServiceVersion();
     abstract protected Logger getLogger();
-    abstract protected PegacornInternalFHIRClientServices getFHIRClientServices();
+    abstract protected InternalFHIRClientServices getFHIRClientServices();
     abstract protected Identifier getBestIdentifier(MethodOutcome outcome);
-    abstract public VirtualDBMethodOutcome synchroniseResource(ResourceType resourceType, Resource resource);
+    abstract public TransactionMethodOutcome synchroniseResource(ResourceType resourceType, Resource resource);
 
     @Override
     protected String specifySTAClientName() {
@@ -82,27 +89,15 @@ public abstract class PersistenceServiceBase extends GenericSTAClientWUPTemplate
     }
 
     @Override
-    protected String specifySTAWorkshopName() {
-        return "VirtualDB";
+    protected ProcessingPlantInterface specifyProcessingPlant() {
+        return (processingPlant);
     }
-
-    @Override
-    protected String specifySTAClientType() {
-        return "VirtualDBPersistenceServiceAccessor";
-    }
-
-        @Override
-    protected ProcessingPlantServicesInterface specifyProcessingPlant() {
-        return (ladonProcessingPlant);
-    }
-
-    protected PegacornLadonVirtualDBPersistenceComponentNames getVirtualDBPersistenceNames(){return(virtualDBPersistenceNames);}
 
     //
     // Database Transactions
     //
 
-    public VirtualDBMethodOutcome getResourceById(String resourceType, IdType id){
+    public TransactionMethodOutcome getResourceById(String resourceType, IdType id){
         getLogger().debug(".standardReviewResource(): Entry, identifier --> {}", id);
         // Attempt to "get" the Resource
         Resource outputResource = (Resource)getFHIRClientServices().getClient()
@@ -112,10 +107,10 @@ public abstract class PersistenceServiceBase extends GenericSTAClientWUPTemplate
                 .execute();
         if(outputResource != null) {
             // There was no Resource with that Identifier....
-            VirtualDBMethodOutcome outcome = new VirtualDBMethodOutcome();
+            TransactionMethodOutcome outcome = new TransactionMethodOutcome();
             outcome.setCreated(false);
-            outcome.setCausalAction(VirtualDBActionTypeEnum.REVIEW);
-            outcome.setStatusEnum(VirtualDBActionStatusEnum.REVIEW_FINISH);
+            outcome.setCausalAction(TransactionTypeEnum.REVIEW);
+            outcome.setStatusEnum(TransactionStatusEnum.REVIEW_FINISH);
             CodeableConcept details = new CodeableConcept();
             Coding detailsCoding = new Coding();
             detailsCoding.setSystem("https://www.hl7.org/fhir/codesystem-operation-outcome.html"); // TODO Pegacorn specific encoding --> need to check validity
@@ -135,10 +130,10 @@ public abstract class PersistenceServiceBase extends GenericSTAClientWUPTemplate
             return (outcome);
         } else {
             // There was no Resource with that Identifier....
-            VirtualDBMethodOutcome outcome = new VirtualDBMethodOutcome();
+            TransactionMethodOutcome outcome = new TransactionMethodOutcome();
             outcome.setCreated(false);
-            outcome.setCausalAction(VirtualDBActionTypeEnum.REVIEW);
-            outcome.setStatusEnum(VirtualDBActionStatusEnum.REVIEW_FAILURE);
+            outcome.setCausalAction(TransactionTypeEnum.REVIEW);
+            outcome.setStatusEnum(TransactionStatusEnum.REVIEW_FAILURE);
             CodeableConcept details = new CodeableConcept();
             Coding detailsCoding = new Coding();
             detailsCoding.setSystem("https://www.hl7.org/fhir/codesystem-operation-outcome.html");
@@ -158,7 +153,7 @@ public abstract class PersistenceServiceBase extends GenericSTAClientWUPTemplate
         }
     }
 
-    public VirtualDBMethodOutcome standardCreateResource(Resource resourceToCreate) {
+    public TransactionMethodOutcome standardCreateResource(Resource resourceToCreate) {
         getLogger().debug(".standardCreateResource(): Entry, resourceToCreate --> {}", resourceToCreate);
         MethodOutcome callOutcome = getFHIRClientServices().getClient()
                 .create()
@@ -170,14 +165,14 @@ public abstract class PersistenceServiceBase extends GenericSTAClientWUPTemplate
             getLogger().error(".writeResource(): Can't create Resource {}, error --> {}", callOutcome.getOperationOutcome());
         }
         Identifier bestIdentifier = getBestIdentifier(callOutcome);
-        VirtualDBMethodOutcome outcome = new VirtualDBMethodOutcome(VirtualDBActionTypeEnum.CREATE, bestIdentifier, callOutcome);
+        TransactionMethodOutcome outcome = new TransactionMethodOutcome(TransactionTypeEnum.CREATE, bestIdentifier, callOutcome);
         getLogger().debug(".standardCreateResource(): Exit, outcome --> {}", outcome);
         return(outcome);
     }
 
-    public VirtualDBMethodOutcome standardReviewResource(Class <? extends IBaseResource> resourceClass, Identifier identifier){
+    public TransactionMethodOutcome standardReviewResource(Class <? extends IBaseResource> resourceClass, Identifier identifier){
         getLogger().debug(".standardReviewResource(): Entry, identifier --> {}", identifier);
-        VirtualDBMethodOutcome outcome = standardGetResourceViaIdentifier(resourceClass, identifier);
+        TransactionMethodOutcome outcome = standardGetResourceViaIdentifier(resourceClass, identifier);
         return(outcome);
     }
 
@@ -188,7 +183,7 @@ public abstract class PersistenceServiceBase extends GenericSTAClientWUPTemplate
      * @return
      */
 
-    public VirtualDBMethodOutcome standardGetResourceViaIdentifier(Class <? extends IBaseResource> resourceClass, Identifier identifier){
+    public TransactionMethodOutcome standardGetResourceViaIdentifier(Class <? extends IBaseResource> resourceClass, Identifier identifier){
         getLogger().debug(".standardGetResourceViaIdentifier(): Entry, identifier --> {}", identifier);
         if(getLogger().isDebugEnabled()) {
             getLogger().debug(".standardGetResourceViaIdentifier(): Entry identifier.type.system --> {}", identifier.getType().getCodingFirstRep().getSystem());
@@ -200,14 +195,14 @@ public abstract class PersistenceServiceBase extends GenericSTAClientWUPTemplate
         if (retrievedResource == null){
             // There was no response to the query or it was in error....
             getLogger().trace(".standardGetResourceViaIdentifier(): There was no response to the query or it was in error....");
-            VirtualDBMethodOutcome outcome = virtualDBMethodOutcomeFactory.createResourceActivityOutcome(null,VirtualDBActionStatusEnum.REVIEW_FAILURE,activityLocation);
+            TransactionMethodOutcome outcome = virtualDBMethodOutcomeFactory.createResourceActivityOutcome(null, TransactionStatusEnum.REVIEW_FAILURE,activityLocation);
             outcome.setIdentifier(identifier);
             return(outcome);
         } else {
             getLogger().trace(".standardGetResourceViaIdentifier(): There is a Resource with that Identifier....");
-            VirtualDBMethodOutcome outcome = virtualDBMethodOutcomeFactory.createResourceActivityOutcome(
+            TransactionMethodOutcome outcome = virtualDBMethodOutcomeFactory.createResourceActivityOutcome(
                     null,
-                    VirtualDBActionStatusEnum.REVIEW_FINISH,
+                    TransactionStatusEnum.REVIEW_FINISH,
                     activityLocation);
             outcome.setIdentifier(identifier);
             outcome.setResource(retrievedResource);
@@ -216,7 +211,7 @@ public abstract class PersistenceServiceBase extends GenericSTAClientWUPTemplate
         }
     }
 
-    public VirtualDBMethodOutcome standardUpdateResource(Resource resourceToUpdate) {
+    public TransactionMethodOutcome standardUpdateResource(Resource resourceToUpdate) {
         getLogger().debug(".standardUpdateResource(): Entry, resourceToUpdate --> {}", resourceToUpdate);
         MethodOutcome callOutcome = getFHIRClientServices().getClient()
                 .update()
@@ -228,7 +223,7 @@ public abstract class PersistenceServiceBase extends GenericSTAClientWUPTemplate
             getLogger().error(".writeResource(): Can't update Resource {}, error --> {}", callOutcome.getOperationOutcome());
         }
         Identifier bestIdentifier = getBestIdentifier(callOutcome);
-        VirtualDBMethodOutcome outcome = new VirtualDBMethodOutcome(VirtualDBActionTypeEnum.UPDATE, bestIdentifier, callOutcome);
+        TransactionMethodOutcome outcome = new TransactionMethodOutcome(TransactionTypeEnum.UPDATE, bestIdentifier, callOutcome);
         getLogger().debug(".standardUpdateResource(): Exit, outcome --> {}", outcome);
         return(outcome);
     }

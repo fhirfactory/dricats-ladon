@@ -18,6 +18,11 @@
     </properties>
 
     <dependencies>
+
+        <!--                                 -->
+        <!-- Jakarta/JEE & Wildfly Libraries -->
+        <!--                                 -->
+
         <dependency>
             <groupId>javax.enterprise</groupId>
             <artifactId>cdi-api</artifactId>
@@ -50,6 +55,9 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--                          -->
+        <!-- Apache Commons Libraries -->
+        <!--                          -->
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -57,6 +65,9 @@
             <version>${version-org.apache.commons-lang3}</version>
         </dependency>
 
+        <!--                             -->
+        <!-- JSON Manipulation Libraries -->
+        <!--                             -->
 
         <dependency>
             <groupId>org.json</groupId>
@@ -71,6 +82,9 @@
             <version>${version-com.fasterxml.jackson.core-jackson-core}</version>
         </dependency>
 
+        <!--                  -->
+        <!-- Pegacorn Modules -->
+        <!--                  -->
 
         <!-- Pegacorn Common Code -->
         <dependency>
@@ -84,14 +98,6 @@
         <dependency>
             <groupId>net.fhirfactory.pegacorn</groupId>
             <artifactId>pegacorn-platform-petasos-model</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-        <!-- Pegacorn Petasos Topology Services -->
-        <dependency>
-            <groupId>net.fhirfactory.pegacorn</groupId>
-            <artifactId>pegacorn-platform-petasos-topology</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>
@@ -120,7 +126,16 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>net.fhirfactory.pegacorn</groupId>
+            <artifactId>pegacorn-ladon-mdr-fhirplace</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--            -->
         <!-- Infinispan -->
+        <!--            -->
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-core</artifactId>
@@ -139,6 +154,10 @@
             <scope>compile</scope>
             <version>${version-org.jgroups-jgroups}</version>
         </dependency>
+
+        <!--                   -->
+        <!-- HAPI FHIR Modules -->
+        <!--                   -->
 
         <!-- This dependency includes the core HAPI-FHIR classes -->
         <dependency>
@@ -211,19 +230,7 @@
             <type>pom</type>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>net.fhirfactory.pegacorn</groupId>
-            <artifactId>pegacorn-platform-samples</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>net.fhirfactory.pegacorn</groupId>
-            <artifactId>pegacorn-ladon-mdr-fhirplace</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
+
     </dependencies>
 
     <build>

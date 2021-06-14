@@ -1,20 +1,31 @@
 package net.fhirfactory.pegacorn.ladon.mdr.fhirplace;
 
+import net.fhirfactory.pegacorn.common.model.componentid.TopologyNodeTypeEnum;
 import net.fhirfactory.pegacorn.ladon.mdr.fhirplace.conduits.*;
-import net.fhirfactory.pegacorn.processingplatform.common.StandardWorkshop;
+import net.fhirfactory.pegacorn.workshops.base.Workshop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 @ApplicationScoped
-public class FHIRPlaceMDRWorkshop  extends StandardWorkshop {
+public class FHIRPlaceMDRWorkshop  extends Workshop {
     private static final Logger LOG = LoggerFactory.getLogger(FHIRPlaceMDRWorkshop.class);
 
     private static String FHIRPLACE_MDR_CONDUIT_WORKSHOP = "FHIRPlaceMDR-Conduit";
     private static String FHIRPLACE_MDR_CONDUIT_WORKSHOP_VERSION = "1.0.0";
+
+
+    @Override
+    protected Logger specifyLogger() {
+        return LOG;
+    }
+
+    @Override
+    protected TopologyNodeTypeEnum specifyWorkshopType() {
+        return TopologyNodeTypeEnum.WORKSHOP;
+    }
 
     @Inject
     private DocumentReferenceSoTResourceConduit documentReferenceSoTResourceConduit;

@@ -22,13 +22,15 @@
 package net.fhirfactory.pegacorn.ladon.virtualdb.persistence;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.businesskey.VirtualDBKeyManagement;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
+import net.fhirfactory.pegacorn.internals.fhir.r4.resources.identifier.PegacornIdentifierDataTypeHelpers;
+import net.fhirfactory.pegacorn.components.transaction.model.TransactionMethodOutcome;
 import net.fhirfactory.pegacorn.ladon.virtualdb.persistence.common.PersistenceServiceBase;
 import net.fhirfactory.pegacorn.ladon.virtualdb.persistence.servers.ClinicalRequestAndResponsePersistenceServerSecureAccessor;
-import net.fhirfactory.pegacorn.platform.restfulapi.PegacornInternalFHIRClientServices;
-import org.hl7.fhir.r4.model.*;
+import net.fhirfactory.pegacorn.platform.edge.ask.InternalFHIRClientServices;
+import org.hl7.fhir.r4.model.Communication;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +45,7 @@ public class CommunicationPersistenceService extends PersistenceServiceBase {
     private ClinicalRequestAndResponsePersistenceServerSecureAccessor persistenceServerSecureAccessor;
 
     @Inject
-    VirtualDBKeyManagement virtualDBKeyResolver;
+    private PegacornIdentifierDataTypeHelpers virtualDBKeyResolver;
 
     @Override
     protected String specifyPersistenceServiceName() {
@@ -61,12 +63,12 @@ public class CommunicationPersistenceService extends PersistenceServiceBase {
     }
 
     @Override
-    protected PegacornInternalFHIRClientServices getFHIRClientServices() {
+    protected InternalFHIRClientServices getFHIRClientServices() {
         return (persistenceServerSecureAccessor);
     }
 
     @Override
-    public VirtualDBMethodOutcome synchroniseResource(ResourceType resourceType, Resource resource) {
+    public TransactionMethodOutcome synchroniseResource(ResourceType resourceType, Resource resource) {
         return null;
     }
 
