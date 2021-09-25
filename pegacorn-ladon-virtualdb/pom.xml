@@ -124,14 +124,6 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-        <!-- Pegacorn Petasos Topology Services -->
-        <dependency>
-            <groupId>net.fhirfactory.pegacorn</groupId>
-            <artifactId>pegacorn-platform-petasos-topology</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
         <!-- Pegacorn Petasos Core Services -->
         <dependency>
             <groupId>net.fhirfactory.pegacorn</groupId>
@@ -258,12 +250,6 @@
             <artifactId>shrinkwrap-resolver-depchain</artifactId>
             <version>${version-org.jboss.shrinkwrap.resolver-shrinkwrap-resolver}</version>
             <type>pom</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.fhirfactory.pegacorn</groupId>
-            <artifactId>pegacorn-platform-samples</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
