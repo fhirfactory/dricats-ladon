@@ -1,15 +1,14 @@
 package net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
+import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
+import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcomeFactory;
+import net.fhirfactory.pegacorn.petasos.model.itops.metrics.valuesets.ComponentFunctionStatusEnum;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcomeFactory;
-import net.fhirfactory.pegacorn.petasos.model.itops.PegacornFunctionStatusEnum;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 @ApplicationScoped
 public class ResourceSoTConduitActionResponseFactory {
@@ -34,7 +33,7 @@ public class ResourceSoTConduitActionResponseFactory {
         return(sotConduitOutcome);
     }
 
-    public ResourceSoTConduitActionResponse createResourceConduitActionResponse(String sotName, PegacornFunctionStatusEnum functionStatusEnum, Resource resource, IdType resourceId, VirtualDBActionStatusEnum status, String activityLocation){
+    public ResourceSoTConduitActionResponse createResourceConduitActionResponse(String sotName, ComponentFunctionStatusEnum functionStatusEnum, Resource resource, IdType resourceId, VirtualDBActionStatusEnum status, String activityLocation){
         ResourceSoTConduitActionResponse sotConduitOutcome = new ResourceSoTConduitActionResponse(sotName, functionStatusEnum);
         outcomeFactory.populateResourceActivityOutcome(sotConduitOutcome, resourceId,  status, activityLocation);
         if(resourceId != null){

@@ -22,9 +22,10 @@
 package net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionTypeEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
-import net.fhirfactory.pegacorn.petasos.model.itops.PegacornFunctionStatusEnum;
+import net.fhirfactory.pegacorn.petasos.model.itops.metrics.valuesets.ComponentFunctionStatusEnum;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Property;
 import org.hl7.fhir.r4.model.Reference;
@@ -37,7 +38,7 @@ public class ResourceSoTConduitActionResponse extends VirtualDBMethodOutcome imp
     @Deprecated
     private Reference sourceOfTruthOwningOrganization;
     private String sourceOfTruthName;
-    private PegacornFunctionStatusEnum functionStatusEnum;
+    private ComponentFunctionStatusEnum functionStatusEnum;
     private ResourceGradeEnum responseResourceGrade;
     private SoTConduitGradeEnum soTGrade;
     private HashSet<String> immutableAttributes;
@@ -45,7 +46,7 @@ public class ResourceSoTConduitActionResponse extends VirtualDBMethodOutcome imp
     private HashSet<String> informationalAttributes;
     private HashSet<String> anecdotalAttributes;
 
-    public ResourceSoTConduitActionResponse(String sotName, PegacornFunctionStatusEnum functionStatus){
+    public ResourceSoTConduitActionResponse(String sotName, ComponentFunctionStatusEnum functionStatus){
         super();
         sourceOfTruthName = sotName;
         functionStatusEnum = functionStatus;
@@ -59,7 +60,7 @@ public class ResourceSoTConduitActionResponse extends VirtualDBMethodOutcome imp
         sourceOfTruthOwningOrganization = null;
     }
 
-    public ResourceSoTConduitActionResponse(String sotName, PegacornFunctionStatusEnum functionStatus, VirtualDBActionTypeEnum action, Identifier identifier, MethodOutcome ori){
+    public ResourceSoTConduitActionResponse(String sotName, ComponentFunctionStatusEnum functionStatus, VirtualDBActionTypeEnum action, Identifier identifier, MethodOutcome ori){
         super(action,identifier,ori);
         sourceOfTruthName = sotName;
         functionStatusEnum = functionStatus;
@@ -194,11 +195,11 @@ public class ResourceSoTConduitActionResponse extends VirtualDBMethodOutcome imp
         this.sourceOfTruthName = sourceOfTruthName;
     }
 
-    public PegacornFunctionStatusEnum getFunctionStatusEnum() {
+    public ComponentFunctionStatusEnum getFunctionStatusEnum() {
         return functionStatusEnum;
     }
 
-    public void setFunctionStatusEnum(PegacornFunctionStatusEnum functionStatusEnum) {
+    public void setFunctionStatusEnum(ComponentFunctionStatusEnum functionStatusEnum) {
         this.functionStatusEnum = functionStatusEnum;
     }
 

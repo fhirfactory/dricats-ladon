@@ -21,9 +21,12 @@
  */
 package net.fhirfactory.pegacorn.ladon.model.virtualdb.businesskey;
 
-import net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.endpoint.EndpointIdentifierBuilder;
-import net.fhirfactory.pegacorn.datasets.fhir.r4.internal.systems.DeploymentInstanceDetail;
-import org.hl7.fhir.r4.model.*;
+import net.fhirfactory.pegacorn.internals.fhir.r4.internal.systems.DeploymentInstanceDetail;
+import net.fhirfactory.pegacorn.internals.fhir.r4.resources.endpoint.factories.EndpointIdentifierFactory;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +41,7 @@ public class VirtualDBKeyManagement {
     private static final Logger LOG = LoggerFactory.getLogger(VirtualDBKeyManagement.class);
 
     @Inject
-    EndpointIdentifierBuilder endpointIdentifierBuilder;
+    EndpointIdentifierFactory endpointIdentifierBuilder;
 
     @Inject
     DeploymentInstanceDetail deploymentInstanceDetail;

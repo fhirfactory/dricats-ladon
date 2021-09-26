@@ -21,14 +21,13 @@
  */
 package net.fhirfactory.pegacorn.ladon.model.behaviours;
 
+import net.fhirfactory.pegacorn.components.dataparcel.DataParcelTypeDescriptor;
 import net.fhirfactory.pegacorn.ladon.model.stimuli.Stimulus;
-import net.fhirfactory.pegacorn.ladon.model.stimuli.StimulusType;
 import net.fhirfactory.pegacorn.ladon.model.twin.DigitalTwinIdentifier;
-import net.fhirfactory.pegacorn.petasos.model.topics.TopicToken;
 
 import java.util.List;
 
 public interface BehaviourCentricInclusionFilterRulesInterface {
-    List<TopicToken> positiveStaticFilterStimulus();
+    List<DataParcelTypeDescriptor> positiveStaticFilterStimulus();
     List<DigitalTwinIdentifier> positiveDynamicFilterTwinInstancesForStimulus(Stimulus stimulusInstant);
 }

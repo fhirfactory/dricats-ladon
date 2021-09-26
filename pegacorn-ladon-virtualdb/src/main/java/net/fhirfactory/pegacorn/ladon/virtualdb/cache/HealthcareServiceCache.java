@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.pegacorn.ladon.virtualdb.cache;
 
-import net.fhirfactory.pegacorn.deployment.properties.LadonDefaultDeploymentProperties;
+import net.fhirfactory.pegacorn.deployment.properties.codebased.ladon.LadonDefaultDeploymentProperties;
 import net.fhirfactory.pegacorn.ladon.virtualdb.cache.common.VirtualDBIdTypeBasedCacheBase;
 import org.hl7.fhir.r4.model.HealthcareService;
 import org.hl7.fhir.r4.model.Identifier;

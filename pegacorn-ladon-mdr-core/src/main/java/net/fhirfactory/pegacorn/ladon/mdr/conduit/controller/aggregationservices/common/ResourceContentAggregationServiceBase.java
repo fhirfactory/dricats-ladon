@@ -1,10 +1,11 @@
 package net.fhirfactory.pegacorn.ladon.mdr.conduit.controller.aggregationservices.common;
 
-import net.fhirfactory.pegacorn.datasets.fhir.r4.codesystems.PegacornIdentifierCodeEnum;
-import net.fhirfactory.pegacorn.datasets.fhir.r4.codesystems.PegacornIdentifierCodeSystemFactory;
-import net.fhirfactory.pegacorn.datasets.fhir.r4.common.SourceOfTruthRIDIdentifierBuilder;
+import net.fhirfactory.pegacorn.internals.fhir.r4.codesystems.PegacornIdentifierCodeEnum;
+import net.fhirfactory.pegacorn.internals.fhir.r4.codesystems.PegacornIdentifierCodeSystemFactory;
+import net.fhirfactory.pegacorn.internals.fhir.r4.common.SourceOfTruthRIDIdentifierBuilder;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.businesskey.VirtualDBKeyManagement;
-import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.*;
+import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponse;
+import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitSearchResponseElement;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBMethodOutcome;
 import net.fhirfactory.pegacorn.util.FHIRContextUtility;
 import org.hl7.fhir.r4.model.*;

@@ -19,7 +19,7 @@
 
     <modules>
         <module>../pegacorn-ladon-mdr-core</module>
-        <module>../pegacorn-ladon-mdr-fhirplace</module>
+        <!--module>../pegacorn-ladon-mdr-fhirplace</module-->
     </modules>
 
     <name>Pegacorn :: Ladon :: MDR</name>

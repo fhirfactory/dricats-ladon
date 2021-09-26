@@ -21,15 +21,9 @@
  */
 package net.fhirfactory.pegacorn.ladon.model.stimuli;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.hl7.fhir.r4.model.Resource;
-
-import net.fhirfactory.pegacorn.common.model.FDNToken;
+import net.fhirfactory.pegacorn.common.model.generalid.FDNToken;
 import net.fhirfactory.pegacorn.ladon.model.behaviours.BehaviourIdentifier;
 import net.fhirfactory.pegacorn.ladon.model.twin.DigitalTwinIdentifier;
-import net.fhirfactory.pegacorn.petasos.model.uow.UoW;
 
 public class StimulusPackage {
     FDNToken stimulusUoWIdentifier;

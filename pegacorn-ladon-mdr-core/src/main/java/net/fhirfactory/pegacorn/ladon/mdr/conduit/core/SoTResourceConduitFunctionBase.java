@@ -2,6 +2,8 @@ package net.fhirfactory.pegacorn.ladon.mdr.conduit.core;
 
 import javax.inject.Inject;
 
+import net.fhirfactory.pegacorn.petasos.model.itops.metrics.valuesets.ComponentFunctionStatusEnum;
+import net.fhirfactory.pegacorn.platform.edge.ask.InternalFHIRClientServices;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Identifier;
@@ -14,13 +16,12 @@ import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActi
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponseFactory;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.SoTResourceConduit;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.operations.VirtualDBActionStatusEnum;
-import net.fhirfactory.pegacorn.petasos.model.itops.PegacornFunctionStatusEnum;
-import net.fhirfactory.pegacorn.platform.restfulapi.PegacornInternalFHIRClientServices;
 import net.fhirfactory.pegacorn.util.FHIRContextUtility;
 
 public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit {
     @Inject
     FHIRContextUtility fhirContextUtility;
+
     @Inject
     private ResourceSoTConduitActionResponseFactory sotConduitOutcomeFactory;
     
@@ -31,16 +32,16 @@ public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit 
 
     @Override
     protected void doSubclassInitialisations(){
-        getFHIRServiceAccessor().initialise();
+        // getFHIRServiceAccessor().initialise();
     }
 
     protected IGenericClient getFHIRPlaceShardClient(){
         return(getFHIRServiceAccessor().getClient());
     }
 
-    abstract protected PegacornInternalFHIRClientServices specifySecureAccessor();
+    abstract protected InternalFHIRClientServices specifySecureAccessor();
 
-    protected PegacornInternalFHIRClientServices getFHIRServiceAccessor(){
+    protected InternalFHIRClientServices getFHIRServiceAccessor(){
         return(specifySecureAccessor());
     }
 
@@ -83,7 +84,7 @@ public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit 
             // There was no response to the query or it was in error....
             getLogger().trace(".standardGetResourceViaIdentifier(): There was no response to the query or it was in error....");
             ResourceSoTConduitActionResponse outcome = sotConduitOutcomeFactory.createResourceConduitActionResponse(
-                    getSourceOfTruthEndpointName(), PegacornFunctionStatusEnum.FUNCTION_STATUS_OK, null, null, VirtualDBActionStatusEnum.REVIEW_FAILURE, activityLocation);
+                    getSourceOfTruthEndpointName(),ComponentFunctionStatusEnum.FUNCTION_STATUS_FAILED, null, null, VirtualDBActionStatusEnum.REVIEW_FAILURE, activityLocation);
             outcome.setIdentifier(identifier);
             outcome.setResource(null);
             getLogger().debug(".standardGetResourceViaIdentifier(): Exit, Returning \"failed\" outcome....");
@@ -96,7 +97,7 @@ public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit 
         getLogger().trace(".standardGetResourceViaIdentifier(): There one and only one Resource with that Identifier....");
         ResourceSoTConduitActionResponse outcome = sotConduitOutcomeFactory.createResourceConduitActionResponse(
                 getSourceOfTruthEndpointName(),
-                PegacornFunctionStatusEnum.FUNCTION_STATUS_OK,
+                ComponentFunctionStatusEnum.FUNCTION_STATUS_OK,
                 retrievedResource,
                 null,
                 VirtualDBActionStatusEnum.REVIEW_FINISH,
@@ -146,7 +147,7 @@ public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit 
             getLogger().trace(".standardGetResourceViaIdentifier(): There was no Resource with that Identifier....");
             ResourceSoTConduitActionResponse outcome = getSotConduitOutcomeFactory().createResourceConduitActionResponse(
                     getSourceOfTruthEndpointName(),
-                    PegacornFunctionStatusEnum.FUNCTION_STATUS_OK,
+                    ComponentFunctionStatusEnum.FUNCTION_STATUS_OK,
                     null,
                     id,
                     VirtualDBActionStatusEnum.REVIEW_FAILURE,
@@ -155,7 +156,7 @@ public abstract class SoTResourceConduitFunctionBase extends SoTResourceConduit 
         } else {
             ResourceSoTConduitActionResponse outcome = getSotConduitOutcomeFactory().createResourceConduitActionResponse(
                     getSourceOfTruthEndpointName(),
-                    PegacornFunctionStatusEnum.FUNCTION_STATUS_OK,
+                    ComponentFunctionStatusEnum.FUNCTION_STATUS_OK,
                     retrievedResource,
                     null,
                     VirtualDBActionStatusEnum.REVIEW_FINISH,

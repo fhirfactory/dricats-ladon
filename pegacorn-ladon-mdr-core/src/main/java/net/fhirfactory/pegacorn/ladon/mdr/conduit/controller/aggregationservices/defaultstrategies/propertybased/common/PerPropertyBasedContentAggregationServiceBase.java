@@ -21,13 +21,7 @@
  */
 package net.fhirfactory.pegacorn.ladon.mdr.conduit.controller.aggregationservices.defaultstrategies.propertybased.common;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import net.fhirfactory.pegacorn.datasets.fhir.r4.base.entities.bundle.BundleContentHelper;
+import net.fhirfactory.pegacorn.internals.fhir.r4.resources.bundle.BundleContentHelper;
 import net.fhirfactory.pegacorn.ladon.mdr.conduit.controller.aggregationservices.defaultstrategies.common.DefaultResourceContentAggregationServiceBase;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceGradeEnum;
 import net.fhirfactory.pegacorn.ladon.model.virtualdb.mdr.ResourceSoTConduitActionResponse;
@@ -40,6 +34,11 @@ import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.OperationOutcome;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class PerPropertyBasedContentAggregationServiceBase extends DefaultResourceContentAggregationServiceBase {
 

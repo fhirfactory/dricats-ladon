@@ -1,12 +1,10 @@
 package net.fhirfactory.pegacorn.ladon.model.stimuli;
 
-import net.fhirfactory.pegacorn.petasos.model.topology.NodeElementIdentifier;
-import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Reference;
+import net.fhirfactory.pegacorn.common.model.componentid.TopologyNodeFDNToken;
 import org.hl7.fhir.r4.model.Resource;
 
 public class StimulusReason {
-	private NodeElementIdentifier pegacornEntryPoint;
+	private TopologyNodeFDNToken pegacornEntryPoint;
 	private Resource why;
 	private StimulusReasonTypeEnum reasonType;
 	private String originalSource;
@@ -28,10 +26,10 @@ public class StimulusReason {
 		this.originalSource = ori.getOriginalSource();
 	}
 	
-	public NodeElementIdentifier getPegacornEntryPoint() {
+	public TopologyNodeFDNToken getPegacornEntryPoint() {
 		return pegacornEntryPoint;
 	}
-	public void setPegacornEntryPoint(NodeElementIdentifier source) {
+	public void setPegacornEntryPoint(TopologyNodeFDNToken source) {
 		this.pegacornEntryPoint = source;
 	}
 	public Resource getWhy() {

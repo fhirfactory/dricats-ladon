@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Mark A. Hunter (ACT Health)
+ * Copyright (c) 2021 Mark A. Hunter (ACT Health)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,19 +19,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.pegacorn.ladon.mdr.fhirplace.accessor;
+package net.fhirfactory.pegacorn.ladon.mdr.fhirplace.accessor.common;
 
-import net.fhirfactory.pegacorn.ladon.mdr.fhirplace.accessor.common.FHIRPlaceIMAccessorBase;
+import net.fhirfactory.pegacorn.components.capabilities.CapabilityUtilisationBrokerInterface;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
-@ApplicationScoped
-public class FHIRPlaceBaseManagementMDRAccessor extends FHIRPlaceIMAccessorBase {
-    private static final Logger LOG = LoggerFactory.getLogger(FHIRPlaceBaseManagementMDRAccessor.class);
+public abstract class FHIRPlaceIMAccessorBase {
 
-    @Override
-    protected Logger specifyLogger(){return(LOG);}
+    @Inject
+    private CapabilityUtilisationBrokerInterface capabilityUtilisationBroker;
 
+    //
+    // Abstract Methods
+    //
+
+    abstract protected Logger specifyLogger();
+
+    //
+    // Getters (and Setters)
+    //
+
+    public CapabilityUtilisationBrokerInterface getCapabilityUtilisationBroker() {
+        return capabilityUtilisationBroker;
+    }
+
+    protected Logger getLogger(){
+        return(specifyLogger());
+    }
 }
