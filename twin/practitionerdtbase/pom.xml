@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
     <!--***********************************************************************************-->
     <!--                                                                                   -->
@@ -7,17 +8,14 @@
     <!--                                                                                   -->
     <!--***********************************************************************************-->
 
-    <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>net.fhirfactory.pegacorn</groupId>
-        <artifactId>pegacorn-ladon</artifactId>
+        <artifactId>pegacorn-ladon-twin</artifactId>
         <version>1.5.0-SNAPSHOT</version>
     </parent>
     
-    <artifactId>pegacorn-ladon-model</artifactId>
-    <name>Pegacorn :: Ladon :: Model</name>
-	<description>Pegacorn::Ladon's Data Model set</description>
+    <artifactId>pegacorn-ladon-twin-practitionerdtbase</artifactId>
+    <name>Pegacorn :: Ladon :: Twin :: Practitioner Digital-Twin Base (Framework)</name>
     <packaging>jar</packaging>
 
     <!--***********************************************************************************-->
@@ -61,7 +59,6 @@
     <!--***********************************************************************************-->
 
     <dependencies>
-
         <!--*******************************************************************************-->
         <!-- JakartaEE (Wildfly) Libraries                                                 -->
         <!--*******************************************************************************-->
@@ -139,6 +136,19 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
+            <version>${version-com.fasterxml.jackson.core-jackson-core}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${version-com.fasterxml.jackson.core-jackson-databind}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
             <version>${version-com.fasterxml.jackson.core-jackson-core}</version>
         </dependency>
 
@@ -292,6 +302,17 @@
         <dependency>
             <groupId>net.fhirfactory.pegacorn</groupId>
             <artifactId>pegacorn-buildingblocks-workunitprocessors</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--*******************************************************************************-->
+        <!-- Pegacorn Ladon                                                                -->
+        <!--*******************************************************************************-->
+
+        <dependency>
+            <groupId>net.fhirfactory.pegacorn</groupId>
+            <artifactId>pegacorn-ladon-model</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

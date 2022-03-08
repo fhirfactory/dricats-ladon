@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
     <!--***********************************************************************************-->
     <!--                                                                                   -->
@@ -7,17 +8,14 @@
     <!--                                                                                   -->
     <!--***********************************************************************************-->
 
-    <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>net.fhirfactory.pegacorn</groupId>
         <artifactId>pegacorn-ladon</artifactId>
         <version>1.5.0-SNAPSHOT</version>
     </parent>
-    
-    <artifactId>pegacorn-ladon-model</artifactId>
-    <name>Pegacorn :: Ladon :: Model</name>
-	<description>Pegacorn::Ladon's Data Model set</description>
+
+    <artifactId>pegacorn-ladon-subsystem</artifactId>
+    <name>Pegacorn :: Ladon :: Subsystem </name>
     <packaging>jar</packaging>
 
     <!--***********************************************************************************-->
@@ -142,8 +140,25 @@
             <version>${version-com.fasterxml.jackson.core-jackson-core}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${version-com.fasterxml.jackson.core-jackson-databind}</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!--*******************************************************************************-->
-        <!-- Pegacorn (Platform) Libraries                                                 -->
+        <!-- YAML Manipulation Libraries                                                   -->
+        <!--*******************************************************************************-->
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>${version-com.fasterxml.jackson.core-jackson-core}</version>
+        </dependency>
+
+        <!--*******************************************************************************-->
+        <!-- Pegacorn Common Code                                                          -->
         <!--*******************************************************************************-->
 
         <dependency>
@@ -210,6 +225,10 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
+
+        <!--*******************************************************************************-->
+        <!-- Pegacorn (Petasos Audit) Libraries                                            -->
+        <!--*******************************************************************************-->
 
         <dependency>
             <groupId>net.fhirfactory.pegacorn</groupId>
@@ -297,6 +316,29 @@
         </dependency>
 
         <!--*******************************************************************************-->
+        <!-- Pegacorn (FHIR) Datagrid Libraries                                            -->
+        <!--*******************************************************************************-->
+
+        <dependency>
+            <groupId>net.fhirfactory.pegacorn</groupId>
+            <artifactId>pegacorn-buildingblocks-fhirim</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--*******************************************************************************-->
+        <!-- Pegacorn Ladon                                                                -->
+        <!--*******************************************************************************-->
+
+        <dependency>
+            <groupId>net.fhirfactory.pegacorn</groupId>
+            <artifactId>pegacorn-ladon-model</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--*******************************************************************************-->
         <!-- JGroups Manipulation Libraries                                                -->
         <!--*******************************************************************************-->
 
@@ -377,12 +419,6 @@
 
     </dependencies>
 
-    <!--***********************************************************************************-->
-    <!--                                                                                   -->
-    <!-- Project Build                                                                     -->
-    <!--                                                                                   -->
-    <!--***********************************************************************************-->
-
     <build>
         <plugins>
             <plugin>
@@ -416,4 +452,92 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <!-- An optional Arquillian testing profile -->
+            <id>arquillian-managed-wildfly</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.wildfly.arquillian</groupId>
+                    <artifactId>wildfly-arquillian-container-managed</artifactId>
+                    <version>${version-org.wildfly.arquillian-wildfly-arquillian-container-managed}</version>
+                </dependency>
+            </dependencies>
+            <build>
+              <pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>${version-org.apache.maven-dependency-plugin}</version>
+                        <executions>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.wildfly</groupId>
+                                            <artifactId>wildfly-dist</artifactId>
+                                            <version>${version-org.wildfly}</version>
+                                            <type>zip</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${project.basedir}/target/</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>${version-org.apache.maven-antrun-plugin}</version>
+                        <executions>
+                            <execution>
+                                <id>set-wildfly-xml</id>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <echo>ANT TASK - Copying standalone-full-ha.xml from ${project.basedir}/src/test/resources/wildfly/${version-org.wildfly} to ${project.basedir}/target/wildfly-${version-org.wildfly}/standalone/configuration</echo>
+                                        <copy todir="${project.basedir}/target/wildfly-${version-org.wildfly}/standalone/configuration" overwrite="true" flatten="true">
+                                            <fileset dir="${project.basedir}/src/test/resources/wildfly/${version-org.wildfly}/">
+                                                <include name="standalone-full-ha.xml"/>
+                                            </fileset>
+                                        </copy>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${version-org.apache.maven-surefire-plugin}</version>
+                        <configuration>
+                            <!-- Configuration for Arquillian: -->
+                            <systemPropertyVariables>
+                                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                                <JBOSS_HOME>${project.basedir}/target/wildfly-${version-org.wildfly}</JBOSS_HOME>
+                                <jboss.home>${project.basedir}/target/wildfly-${version-org.wildfly}</jboss.home>
+                                <module.path>${project.basedir}/target/wildfly-${version-org.wildfly}/modules
+                                </module.path>
+                            </systemPropertyVariables>
+                            <redirectTestOutputToFile>false</redirectTestOutputToFile>
+                        </configuration>
+                    </plugin>
+                </plugins>
+              </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 </project>
