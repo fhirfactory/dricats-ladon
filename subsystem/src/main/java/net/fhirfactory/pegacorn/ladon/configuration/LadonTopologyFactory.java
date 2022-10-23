@@ -21,8 +21,7 @@
  */
 package net.fhirfactory.pegacorn.ladon.configuration;
 
-import net.fhirfactory.pegacorn.core.model.topology.nodes.*;
-import net.fhirfactory.pegacorn.deployment.topology.factories.archetypes.fhirpersistence.im.FHIRIMSubsystemTopologyFactory;
+import net.fhirfactory.pegacorn.deployment.topology.factories.fhirpersistence.im.FHIRIMSubsystemTopologyFactory;
 import net.fhirfactory.pegacorn.ladon.common.LadonTopologyNames;
 import net.fhirfactory.pegacorn.util.PegacornEnvironmentProperties;
 import org.slf4j.Logger;
@@ -53,7 +52,7 @@ public class LadonTopologyFactory extends FHIRIMSubsystemTopologyFactory {
 
     @Override
     protected ProcessingPlantSoftwareComponent buildSubsystemTopology() {
-        SubsystemTopologyNode subsystemTopologyNode = addSubsystemNode(getTopologyIM().getSolutionTopology());
+        SubsystemTopologyNode subsystemTopologyNode = addSubsystemNode(getLocalSolution().getSolutionTopology());
         BusinessServiceTopologyNode businessServiceTopologyNode = addBusinessServiceNode(subsystemTopologyNode);
         DeploymentSiteTopologyNode deploymentSiteTopologyNode = addDeploymentSiteNode(businessServiceTopologyNode);
         ClusterServiceTopologyNode clusterServiceTopologyNode = addClusterServiceNode(deploymentSiteTopologyNode);

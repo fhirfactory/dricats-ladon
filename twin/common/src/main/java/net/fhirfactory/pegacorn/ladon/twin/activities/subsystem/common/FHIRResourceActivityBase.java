@@ -24,7 +24,7 @@ package net.fhirfactory.pegacorn.ladon.twin.activities.subsystem.common;
 import ca.uhn.fhir.parser.IParser;
 import net.fhirfactory.pegacorn.core.model.dataparcel.DataParcelManifest;
 import net.fhirfactory.pegacorn.core.model.dataparcel.DataParcelTypeDescriptor;
-import net.fhirfactory.pegacorn.core.model.petasos.uow.UoWPayload;
+import net.fhirfactory.dricats.model.petasos.uow.UoWPayload;
 import net.fhirfactory.pegacorn.util.FHIRContextUtility;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.ResourceType;

@@ -19,7 +19,7 @@
 
     <modules>
         <module>model</module>
-        <module>datagrid</module>
+        <!--module>datagrid</module-->
         <module>twin</module>
         <module>subsystem</module>
     </modules>

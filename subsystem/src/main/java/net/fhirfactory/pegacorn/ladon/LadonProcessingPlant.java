@@ -21,19 +21,19 @@
  */
 package net.fhirfactory.pegacorn.ladon;
 
-import net.fhirfactory.pegacorn.core.constants.systemwide.PegacornReferenceProperties;
+import net.fhirfactory.dricats.constants.systemwide.PegacornReferenceProperties;
 import net.fhirfactory.pegacorn.core.model.topology.role.ProcessingPlantRoleEnum;
-import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.archetypes.PetasosEnabledSubsystemPropertyFile;
-import net.fhirfactory.pegacorn.internals.fhir.r4.internal.topics.FHIRElementTopicFactory;
+import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.archetypes.PetasosEnabledSubsystemPropertyFile;
+import net.fhirfactory.dricats.internals.fhir.r4.internal.topics.FHIRElementTopicFactory;
 import net.fhirfactory.pegacorn.ladon.configuration.LadonConfigurationFile;
 import net.fhirfactory.pegacorn.ladon.configuration.LadonTopologyFactory;
 import net.fhirfactory.pegacorn.ladon.interfaces.configuration.LadonDataGridTopologyFactoryInterface;
-import net.fhirfactory.pegacorn.processingplant.ProcessingPlant;
+import net.fhirfactory.dricats.petasos.participant.processingplant.PetasosEnabledProcessingPlant;
 
 import javax.inject.Inject;
 
 
-public abstract class LadonProcessingPlant extends ProcessingPlant implements LadonDataGridTopologyFactoryInterface {
+public abstract class LadonProcessingPlant extends PetasosEnabledProcessingPlant implements LadonDataGridTopologyFactoryInterface {
 
     @Inject
     private FHIRElementTopicFactory fhirElementTopicFactory;

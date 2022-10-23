@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.pegacorn.ladon.interfaces;
 
-import net.fhirfactory.pegacorn.core.model.petasos.uow.UoWPayload;
+import net.fhirfactory.dricats.model.petasos.uow.UoWPayload;
 
 public interface DigitalTwinBehaviourExecutionInterface {
     public UoWPayload executeBehaviour(UoWPayload incomingStimulus);

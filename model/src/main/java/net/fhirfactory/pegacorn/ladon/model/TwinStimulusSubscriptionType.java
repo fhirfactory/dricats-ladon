@@ -22,7 +22,7 @@
 package net.fhirfactory.pegacorn.ladon.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import net.fhirfactory.pegacorn.core.constants.petasos.PetasosPropertyConstants;
+import net.fhirfactory.dricats.constants.petasos.PetasosPropertyConstants;
 import net.fhirfactory.pegacorn.core.model.dataparcel.DataParcelManifest;
 
 import java.time.Instant;

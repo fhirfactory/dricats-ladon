@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.pegacorn.ladon.workshops.datagrid.cache;
 
-import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.archetypes.PetasosEnabledSubsystemPropertyFile;
+import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.archetypes.PetasosEnabledSubsystemPropertyFile;
 import net.fhirfactory.pegacorn.fhirim.workshops.datagrid.cache.common.BaseResourceReplicatedCacheServices;
 import net.fhirfactory.pegacorn.ladon.interfaces.configuration.LadonDataGridTopologyFactoryInterface;
 import org.slf4j.Logger;

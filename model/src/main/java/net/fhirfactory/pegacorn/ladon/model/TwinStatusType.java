@@ -22,8 +22,8 @@
 package net.fhirfactory.pegacorn.ladon.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import net.fhirfactory.pegacorn.core.constants.petasos.PetasosPropertyConstants;
-import net.fhirfactory.pegacorn.core.model.petasos.task.datatypes.identity.datatypes.TaskIdType;
+import net.fhirfactory.dricats.constants.petasos.PetasosPropertyConstants;
+import net.fhirfactory.dricats.model.petasos.task.datatypes.identity.datatypes.TaskIdType;
 
 import java.io.Serializable;
 import java.time.Instant;

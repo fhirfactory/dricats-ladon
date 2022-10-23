@@ -17,7 +17,7 @@
     
     <artifactId>dricats-ladon-model</artifactId>
     <name>DRICATS :: Ladon :: Model</name>
-	<description>Pegacorn::Ladon's Data Model set</description>
+	<description>DRICaTS::Ladon's Data Model set</description>
     <packaging>jar</packaging>
 
     <!--***********************************************************************************-->
@@ -96,7 +96,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${version-org.apache.commons-lang3}</version>
         </dependency>
 
         <!--*******************************************************************************-->
@@ -106,13 +105,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
-            <version>${version-org.apache.camel}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cdi</artifactId>
-            <version>${version-org.apache.camel}</version>
         </dependency>
 
         <!--*******************************************************************************-->
@@ -122,7 +119,6 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>${version-org.apache.httpcomponents-httpclient}</version>
         </dependency>
 
         <!--*******************************************************************************-->
@@ -139,11 +135,10 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>${version-com.fasterxml.jackson.core-jackson-core}</version>
         </dependency>
 
         <!--*******************************************************************************-->
-        <!-- Pegacorn (Platform) Libraries                                                 -->
+        <!-- DRICaTS (Platform) Libraries                                                 -->
         <!--*******************************************************************************-->
 
         <dependency>
@@ -155,144 +150,55 @@
         </dependency>
 
         <!--*******************************************************************************-->
-        <!-- Pegacorn Core Data Models                                                     -->
+        <!-- DRICaTS Core Data Models                                                     -->
         <!--*******************************************************************************-->
 
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-buildingblocks-datamodels-core</artifactId>
+            <artifactId>dricats-datamodels-petasos</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.fhirfactory.dricats</groupId>
+            <artifactId>dricats-datamodels-common</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <!--*******************************************************************************-->
-        <!-- Pegacorn (Deployment) Libraries                                               -->
+        <!-- DRICaTS (Deployment) Libraries                                               -->
         <!--*******************************************************************************-->
 
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-deployment-properties</artifactId>
+            <artifactId>dricats-deployment-configuration</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-deployment-constants</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-deployment-datasets</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-deployment-topology</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
             <scope>compile</scope>
         </dependency>
 
         <!--*******************************************************************************-->
-        <!-- Pegacorn (Petasos) Libraries                                                  -->
+        <!-- DRICaTS (FHIR) Libraries                                                     -->
         <!--*******************************************************************************-->
 
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-buildingblocks-petasos-core</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-buildingblocks-petasos-audit</artifactId>
+            <artifactId>dricats-datamodels-fhir</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
 
         <!--*******************************************************************************-->
-        <!-- Pegacorn (FHIR) Libraries                                                     -->
+        <!-- DRICaTS Petasos Framework Libraries                                       -->
         <!--*******************************************************************************-->
 
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-buildingblocks-datamodels-fhir</artifactId>
+            <artifactId>dricats-petasos-framework</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-
-        <!--*******************************************************************************-->
-        <!-- Pegacorn (BuildingBlock) Edge Libraries                                       -->
-        <!--*******************************************************************************-->
-
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-buildingblocks-edge-restful</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-buildingblocks-edge-messaging</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-buildingblocks-edge-model</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-
-        <!--*******************************************************************************-->
-        <!-- Pegacorn (BuildingBlock) Endpoints Libraries                                  -->
-        <!--*******************************************************************************-->
-
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-buildingblocks-endpoints</artifactId>
-            <version>${project.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-
-        <!--*******************************************************************************-->
-        <!-- Pegacorn (BuildingBlock) Archetypes                                           -->
-        <!--*******************************************************************************-->
-
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-buildingblocks-processingplant</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-buildingblocks-workshop</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-buildingblocks-workunitprocessors</artifactId>
-            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -303,7 +209,6 @@
         <dependency>
             <groupId>org.jgroups</groupId>
             <artifactId>jgroups</artifactId>
-            <version>${version-org.jgroups-jgroups}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -347,7 +252,6 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${version-org.junit5}</version>
             <scope>test</scope>
         </dependency>
 
@@ -364,7 +268,6 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${version-ch.qos.logback-classic}</version>
             <scope>compile</scope>
         </dependency>
 

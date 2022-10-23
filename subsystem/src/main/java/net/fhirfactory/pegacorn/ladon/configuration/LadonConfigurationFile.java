@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.pegacorn.ladon.configuration;
 
-import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.common.archetypes.PetasosEnabledSubsystemPropertyFile;
+import net.fhirfactory.pegacorn.deployment.properties.configurationfilebased.archetypes.PetasosEnabledSubsystemPropertyFile;
 
 public class LadonConfigurationFile extends PetasosEnabledSubsystemPropertyFile {
 

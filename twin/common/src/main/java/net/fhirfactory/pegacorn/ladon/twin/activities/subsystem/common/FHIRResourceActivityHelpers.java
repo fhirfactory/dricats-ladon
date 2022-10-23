@@ -23,10 +23,10 @@ package net.fhirfactory.pegacorn.ladon.twin.activities.subsystem.common;
 
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Terser;
-import net.fhirfactory.pegacorn.core.model.petasos.uow.UoWPayload;
-import net.fhirfactory.pegacorn.core.model.petasos.uow.UoWPayloadSet;
-import net.fhirfactory.pegacorn.internals.hl7.v2x.PegacornInternalHL7MessageSimpleUtils;
-import net.fhirfactory.pegacorn.internals.hl7.v2x.PegacornInternalHL7TerserBasedUtils;
+import net.fhirfactory.dricats.model.petasos.uow.UoWPayload;
+import net.fhirfactory.dricats.model.petasos.uow.UoWPayloadSet;
+import net.fhirfactory.dricats.internals.hl7.v2x.PegacornInternalHL7MessageSimpleUtils;
+import net.fhirfactory.dricats.internals.hl7.v2x.PegacornInternalHL7TerserBasedUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hl7.fhir.r4.model.CodeableConcept;
